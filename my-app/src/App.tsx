@@ -26,20 +26,14 @@ const Series = (props: SeriesProps) => {
     <div className="w-fit h-fit">
       {data.map((day) => {
         // scaledColor must be in the set [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
-        const scaledColor = Math.max(
-          Math.floor(Math.min(0.9, day.numberOfSongsPlayed / 50) * 10) * 100,
-          50
-        );
+        const scaledColor = Math.max(Math.floor(Math.min(0.9, day.numberOfSongsPlayed / 50) * 10) * 100, 50);
 
         // do not concat. the scaledColor to the end of the string. This can cause issues:
         // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
         let cellColor: string;
         switch (scaledColor) {
           case 50:
-            cellColor =
-              day.numberOfSongsPlayed !== 0
-                ? 'bg-green-50 border-green-100'
-                : 'bg-white';
+            cellColor = day.numberOfSongsPlayed !== 0 ? 'bg-green-50 border-green-100' : 'bg-white';
             break;
           case 100:
             cellColor = 'bg-green-100 border-green-200';
@@ -72,11 +66,7 @@ const Series = (props: SeriesProps) => {
             cellColor = 'bg-white';
         }
 
-        return (
-          <div
-            className={`w-8 h-8 m-1 rounded-sm border-[2px] ${cellColor}`}
-          ></div>
-        );
+        return <div className={`w-8 h-8 m-1 rounded-sm border-[2px] ${cellColor}`}></div>;
       })}
     </div>
   );
@@ -131,11 +121,16 @@ function App() {
   }
 
   return (
-    <div className="scale-75 flex border w-fit p-3 rounded-sm mx-auto shadow-sm">
-      {year.map((week) => {
-        return <Series data={week}></Series>;
-      })}
-    </div>
+    <>
+      <a className="App-link" href="/login">
+        Login With Spotify
+      </a>
+      <div className="scale-75 flex border w-fit p-3 rounded-sm mx-auto shadow-sm">
+        {year.map((week) => {
+          return <Series data={week}></Series>;
+        })}
+      </div>
+    </>
   );
 }
 
