@@ -1,6 +1,6 @@
 export const queryParamsStringify = (url: string, params?: Record<string, string | undefined>): string => {
   if (params) {
-    return Object.entries(params).reduce((acc, [key, value]) => acc + key + '=' + value, url + '?');
+    return Object.entries(params).reduce((acc, [key, value]) => acc + key + '=' + value + '&', url + '?');
   }
   return url;
 };
