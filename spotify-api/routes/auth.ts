@@ -49,7 +49,7 @@ router.get('/login', function (req, res) {
     show_dialog: 'true',
   };
 
-  res.redirect(`https://accounts.spotify.com/authorize?${queryParamsStringify(params)}`);
+  res.redirect(queryParamsStringify('https://accounts.spotify.com/authorize', params));
 });
 
 router.get('/callback', function (req, res) {
@@ -80,12 +80,7 @@ router.get('/callback', function (req, res) {
       .then(async (response) => {
         const accessToken = response.data.access_token;
         const refreshToken = response.data.refresh_token;
-        res.redirect(
-          `/success?${queryParamsStringify({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          })}`
-        );
+        res.redirect(queryParamsStringify('/success', { access_token: accessToken, refresh_token: refreshToken }));
       })
       .catch((err) => {
         console.log('Failed to get access token.');

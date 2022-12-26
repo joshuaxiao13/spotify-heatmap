@@ -1,7 +1,8 @@
-export const queryParamsStringify = (params: Record<string, string | undefined>): string => {
-  return Object.entries(params)
-    .map(([key, value]) => key + '=' + value)
-    .join('&');
+export const queryParamsStringify = (url: string, params?: Record<string, string | undefined>): string => {
+  if (params) {
+    return Object.entries(params).reduce((acc, [key, value]) => acc + key + '=' + value, url + '?');
+  }
+  return url;
 };
 
 export const generateRandomString = (): string => {
