@@ -1,4 +1,4 @@
-import DayHeatmap, { Day } from "./day";
+import DayHeatmap, { Day } from "./Day";
 
 export type Week = [Day, Day, Day, Day, Day, Day, Day];
 

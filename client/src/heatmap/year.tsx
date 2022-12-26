@@ -1,5 +1,5 @@
-import WeekHeatmap, { Week } from "./week";
-import { Day } from "./day";
+import WeekHeatmap, { Week } from "./Week";
+import { Day } from "./Day";
 
 const YearHeatmap = () => {
 

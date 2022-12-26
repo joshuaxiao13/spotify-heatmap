@@ -1,4 +1,4 @@
-import YearHeatmap from "./heatmap/year";
+import YearHeatmap from "./heatmap/Year";
 
 function App() {
   return (
