@@ -1,0 +1,22 @@
+{
+  "name": "spotify-heatmap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshuaxiao13/spotify-heatmap.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshuaxiao13/spotify-heatmap/issues"
+  },
+  "homepage": "https://github.com/joshuaxiao13/spotify-heatmap#readme",
+  "devDependencies": {
+    "prettier": "2.8.1"
+  }
+}
