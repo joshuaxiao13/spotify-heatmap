@@ -1,9 +1,10 @@
-import express from 'express';
+import { Request, Router } from 'express';
 import axios, { AxiosResponse } from 'axios';
 import { generateRandomString, queryParamsStringify } from '../utils';
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '../constants';
+import { API_KEY, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '../constants';
+import { fetchUserProfile } from '../spotify-requests';
 
-const router = express.Router();
+const router = Router();
 
 interface RequestUserAuthorizationQueryParams extends Record<string, string | undefined> {
   client_id: string;
@@ -29,7 +30,7 @@ interface AccessTokenRequestBodyParams {
 }
 
 router.get('/success', function (req, res) {
-  res.status(200).send({ success: true, data: req.query });
+  res.status(200).json({ success: true, data: req.query });
 });
 
 router.get('/login', function (req, res) {
@@ -52,14 +53,14 @@ router.get('/login', function (req, res) {
   res.redirect(queryParamsStringify('https://accounts.spotify.com/authorize', params));
 });
 
-router.get('/callback', function (req, res) {
-  const code = (req.query.code as string) || null;
-  const state = (req.query.state as string) || null;
+router.get('/callback', function (req: Request<{}, {}, {}, { code: string; state: string }>, res) {
+  const code = req.query.code || null;
+  const state = req.query.state || null;
 
   if (code === null) {
-    res.redirect('/?error=code_not_supplied');
+    res.redirect('/fail?error=code_not_supplied');
   } else if (state === null) {
-    res.redirect('/?error=state_mismatch');
+    res.redirect('/fail?error=state_mismatch');
   } else {
     axios
       .post<AccessTokenResponse, AxiosResponse<AccessTokenResponse>, AccessTokenRequestBodyParams>(
@@ -80,6 +81,15 @@ router.get('/callback', function (req, res) {
       .then(async (response) => {
         const accessToken = response.data.access_token;
         const refreshToken = response.data.refresh_token;
+
+        const profile = await fetchUserProfile(accessToken);
+
+        axios.post(queryParamsStringify(`${API_KEY}/user`, { id: profile.id, refresh_token: refreshToken }), null, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+
         res.redirect(queryParamsStringify('/success', { access_token: accessToken, refresh_token: refreshToken }));
       })
       .catch((err) => {
