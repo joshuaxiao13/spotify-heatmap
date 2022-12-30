@@ -1,13 +1,12 @@
 import express from 'express';
 import path from 'path';
-import router from './routes/auth';
-
-const PORT = process.env.PORT || 3000;
+import { APP_PORT as PORT } from './constants';
+import auth from './routes/auth';
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
-app.use('/', router);
+app.use('/', auth);
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT} ...`);
