@@ -1,6 +1,29 @@
+import { useEffect, useRef, useState } from 'react';
 import YearHeatmap, { genWeeklyData } from './heatmap/Year';
+import SpotifyUser from 'spotify-api';
+import { useSearchParams } from 'react-router-dom';
 
 const Dashboard = () => {
+  const [queryParams] = useSearchParams();
+  const user = useRef<SpotifyUser | null>(null);
+
+  const [profile, setProfile] = useState<any>({});
+
+  useEffect(() => {
+    const access_token = queryParams.get('access_token');
+    const refresh_token = queryParams.get('refresh_token');
+    if (access_token && refresh_token) {
+      user.current = new SpotifyUser(access_token, refresh_token);
+      user.current.getRecentlyPlayed().then((res) => {
+        console.log(res);
+      });
+
+      user.current.profile.then((res) => {
+        setProfile(res);
+      });
+    }
+  }, []);
+
   return (
     <div className="w-screen h-screen">
       <header id="header" className="w-full h-20 bg-slate-800 flex" style={{ color: 'white' }}>
@@ -20,10 +43,10 @@ const Dashboard = () => {
         <div id="dashboardLeft" className="w-1/4">
           <img
             className="rounded-full w-2/3 mx-auto mt-10 mb-4 shadow-md border-3"
-            src="https://avatars.githubusercontent.com/u/55932881?v=4"
+            src={profile.images && profile.images[0].url}
           ></img>
           <div className="w-full">
-            <div className="mx-auto w-fit text-center text-3xl">Joseph Xiao</div>
+            <div className="mx-auto w-fit text-center text-3xl">{profile.display_name}</div>
           </div>
         </div>
         <div id="dashboardRight" className="w-3/4">
