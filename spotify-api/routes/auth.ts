@@ -2,7 +2,7 @@ import { Request, Router } from 'express';
 import axios, { AxiosResponse } from 'axios';
 import { generateRandomString, queryParamsStringify } from '../utils';
 import { API_KEY, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '../constants';
-import { fetchUserProfile } from '../spotify-requests';
+import { fetchUserProfile } from '../spotifyRequests';
 
 const router = Router();
 
@@ -28,10 +28,6 @@ interface AccessTokenRequestBodyParams {
   code: string;
   redirect_uri: string;
 }
-
-router.get('/success', function (req, res) {
-  res.status(200).json({ success: true, data: req.query });
-});
 
 router.get('/login', function (req, res) {
   const scope = [
@@ -90,7 +86,7 @@ router.get('/callback', function (req: Request<{}, {}, {}, { code: string; state
           },
         });
 
-        res.redirect(queryParamsStringify('/success', { access_token: accessToken, refresh_token: refreshToken }));
+        res.redirect(queryParamsStringify('/user', { access_token: accessToken, refresh_token: refreshToken }));
       })
       .catch((err) => {
         console.log('Failed to get access token.');
