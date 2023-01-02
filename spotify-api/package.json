@@ -2,7 +2,7 @@
   "name": "spotify-api",
   "version": "1.0.0",
   "description": "",
-  "main": "spotifyUser.ts",
+  "main": ".",
   "scripts": {
     "start:app": "npx ts-node app.ts",
     "start:server": "npx ts-node server.ts",

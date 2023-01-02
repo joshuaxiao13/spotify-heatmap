@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import YearHeatmap, { genWeeklyData } from './heatmap/Year';
-import SpotifyUser from 'spotify-api';
+import SpotifyUser from 'spotify-api/spotifyUser';
 import { useSearchParams } from 'react-router-dom';
+import { UserProfileResponse } from 'spotify-api/spotifyRequests';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
 
-  const [profile, setProfile] = useState<any>({});
+  const [profile, setProfile] = useState<UserProfileResponse>();
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -43,10 +44,10 @@ const Dashboard = () => {
         <div id="dashboardLeft" className="w-1/4">
           <img
             className="rounded-full w-2/3 mx-auto mt-10 mb-4 shadow-md border-3"
-            src={profile.images && profile.images[0].url}
+            src={profile?.images && profile.images[0].url}
           ></img>
           <div className="w-full">
-            <div className="mx-auto w-fit text-center text-3xl">{profile.display_name}</div>
+            <div className="mx-auto w-fit text-center text-3xl">{profile?.display_name}</div>
           </div>
         </div>
         <div id="dashboardRight" className="w-3/4">
