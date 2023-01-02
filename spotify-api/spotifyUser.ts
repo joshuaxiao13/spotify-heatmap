@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { API_KEY } from './constants';
 import { DayLookup } from './models/user';
 import {
@@ -47,8 +47,9 @@ export default class SpotifyUser {
    * @param refresh_token - the refresh token to generate new access code
    * @param generatePromise - a function that consumes access token and returns the desired request as a promise
    */
-  private async run<T>(generatePromise: (access_token: string) => Promise<T>) {
-    return generatePromise(this.access_token).catch(async (err) => {
+  private async run<T>(generatePromise: (access_token: string) => Promise<T>): Promise<T> {
+    return generatePromise(this.access_token).catch(async (err: any) => {
+      console.log('error:', err);
       switch (err.response.data.msg) {
         /**
          * TODO: might need to change the way errors are handled
@@ -56,29 +57,27 @@ export default class SpotifyUser {
 
         case 'Invalid access token': {
           console.log('Access token does not match id');
-          break;
+          throw err;
         }
         case 'The access token expired': {
-          await refreshAccessToken(this.refresh_token)
-            .then((new_token) => {
-              this.access_token = new_token;
-              console.log('update access token');
-              console.log('new token:', this.access_token);
-              return this.run(generatePromise);
-            })
-            .catch((e) => {
-              if (e.msg == 'invalid_grant') {
-                console.log('Invalid refresh token');
-              } else {
-                console.log('Unknown error');
-                console.log(e);
-              }
-            });
-          break;
+          try {
+            const new_token = await refreshAccessToken(this.refresh_token);
+            this.access_token = new_token;
+            console.log('update access token');
+            console.log('new token:', this.access_token);
+            return this.run(generatePromise);
+          } catch (e: any) {
+            if (e.msg == 'invalid_grant') {
+              console.log('Invalid refresh token');
+            } else {
+              console.log('Unknown error');
+              console.log(e);
+            }
+            throw e;
+          }
         }
         default: {
-          console.log('Unknown error');
-          console.log(err);
+          throw err;
         }
       }
     });
@@ -88,7 +87,7 @@ export default class SpotifyUser {
    * Get recently played tracks
    * @returns List of up to 50 most recently played tracks
    */
-  public async getRecentlyPlayed(): Promise<Track[] | void> {
+  public async getRecentlyPlayed(): Promise<Track[]> {
     return this.run(fetchRecentlyPlayed);
   }
 
@@ -96,7 +95,7 @@ export default class SpotifyUser {
    * Get currently played track
    * @returns Currently played track, or a message if no track is currently played or episode is playing
    */
-  public async getCurrentlyPlayed(): Promise<CurrentlyPlayingResponse | void> {
+  public async getCurrentlyPlayed(): Promise<CurrentlyPlayingResponse> {
     return this.run(fetchCurrentlyPlayed);
   }
 
@@ -121,9 +120,11 @@ export default class SpotifyUser {
    *    else console.log(data.listens);  // print today's listening data for Olivia Rodrigo's "drivers license"
    * });
    */
-  public async getListeningHistory(): Promise<DayLookup | void> {
+  public async getListeningHistory(): Promise<Record<string, DayLookup>> {
     return this.profile.then((profile) => {
-      const getHistory = async (access_token: string): Promise<DayLookup> => {
+      const getHistory = async (
+        access_token: string
+      ): Promise<AxiosResponse<{ history: Record<string, DayLookup> }>> => {
         return axios.get(
           queryParamsStringify(`${API_KEY}/user`, {
             id: profile.id,
@@ -135,7 +136,9 @@ export default class SpotifyUser {
           }
         );
       };
-      return this.run(getHistory);
+      return this.run(getHistory).then((res) => {
+        return res.data.history;
+      });
     });
   }
 
