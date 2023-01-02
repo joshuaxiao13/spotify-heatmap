@@ -1,3 +1,8 @@
+// https://github.com/motdotla/dotenv/issues/581#issuecomment-1013508058
+// react-scripts already uses dotenv
+// comment out when running `npm start` from the client folder or `npm run build:frontend`
+// leave in when running `npm run start:app` or `npm run start:server`
+
 import * as dotenv from 'dotenv';
 dotenv.config();
 
