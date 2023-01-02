@@ -54,7 +54,7 @@ const DayHeatmap = (props: { data: Day }) => {
       cellColor = 'bg-white';
   }
 
-  return <div className={`w-4 h-4 m-1 rounded-sm border-[2px] ${cellColor}`}></div>;
+  return <div className={`w-4 h-4 m-1 rounded-sm border-[1px] ${cellColor}`}></div>;
 };
 
 export default DayHeatmap;

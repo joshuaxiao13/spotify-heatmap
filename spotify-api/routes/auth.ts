@@ -80,11 +80,15 @@ router.get('/callback', function (req: Request<{}, {}, {}, { code: string; state
 
         const profile = await fetchUserProfile(accessToken);
 
-        axios.post(queryParamsStringify(`${API_KEY}/user`, { id: profile.id, refresh_token: refreshToken }), null, {
-          headers: {
-            Authorization: accessToken,
-          },
-        });
+        axios
+          .post(queryParamsStringify(`${API_KEY}/user`, { id: profile.id, refresh_token: refreshToken }), null, {
+            headers: {
+              Authorization: accessToken,
+            },
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
         res.redirect(queryParamsStringify('/user', { access_token: accessToken, refresh_token: refreshToken }));
       })

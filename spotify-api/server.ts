@@ -1,13 +1,23 @@
+/**
+ * TODO: DELETE THIS FILE WHEN FINISHED
+ * AND npm uninstall cors and @types/cors
+ */
+
+import * as dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
-import { SERVER_PORT as PORT } from './constants';
 import user from './routes/user';
 import updateAllUsers from './scripts/updateAllHistory';
+import cors from 'cors';
 
 const app = express();
 
+app.use(cors({ origin: '*' }));
 app.use(express.json());
-app.use('/', user);
+app.use('/api/v1', user);
+
+const PORT = 8000;
 
 const start = async () => {
   try {
@@ -16,9 +26,9 @@ const start = async () => {
     app.listen(PORT, () => {
       console.log(`listening on port ${PORT} ...`);
     });
-    // update every 10 minutes
+    // update every 15 minutes
     updateAllUsers();
-    setInterval(updateAllUsers, 10 * 60 * 1000);
+    setInterval(updateAllUsers, 15 * 60 * 1000);
   } catch (err) {
     console.log('failed to connect to DB');
   }

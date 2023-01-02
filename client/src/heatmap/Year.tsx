@@ -46,7 +46,7 @@ const YearHeatmap = () => {
   const year = genYearlyData();
 
   return (
-    <div className="scale-90 bg-white flex w-fit h-fit p-3 rounded-sm shadow-sm border-2">
+    <div className=" bg-white flex w-fit h-fit p-3 rounded-sm border-[1px]">
       {year.map((week) => {
         return <WeekHeatmap data={week}></WeekHeatmap>;
       })}
