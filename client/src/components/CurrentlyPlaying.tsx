@@ -6,8 +6,7 @@ interface CurrentlyPlayingProps {
   data?: CurrentlyPlayingResponse;
 }
 
-const CurrentlyPlaying = (props: CurrentlyPlayingProps) => {
-  const { data } = props;
+const CurrentlyPlaying = ({ data }: CurrentlyPlayingProps) => {
   const { albumImages, artists, name } = data || {};
 
   return (
@@ -24,7 +23,7 @@ const CurrentlyPlaying = (props: CurrentlyPlayingProps) => {
           {name}
         </Marquee>
         <Marquee className="text-xs" gradientWidth={15}>
-          {artists?.join(', ')}{' '}
+          {artists?.join(', ')}
         </Marquee>
       </div>
     </div>

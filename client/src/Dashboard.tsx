@@ -34,25 +34,23 @@ const Dashboard = () => {
         });
 
       const updateCurrentSong = async (): Promise<void> => {
-        user.current!
-        .getCurrentlyPlayed()
-        .then((res) => {
-          setCurrentSong(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      }
+        user
+          .current!.getCurrentlyPlayed()
+          .then((res) => {
+            setCurrentSong(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
 
       updateCurrentSong();
       setInterval(updateCurrentSong, 60000);
-
     }
   }, []);
 
   return (
     <div className="w-screen h-screen bg-white">
-      {/* Header */}
       <header id="header" className="w-full h-20 bg-slate-800 flex" style={{ color: 'white' }}>
         <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
           <img
