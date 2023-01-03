@@ -23,11 +23,12 @@ const DayHeatmap = (props: DayHeatmapProps) => {
   const { mean, std } = stats;
   const { date, numberOfSongsPlayed, minsPlayed } = data;
 
-  const zScore = std === 0 ? 0 : (numberOfSongsPlayed - mean) / std;
+  // const zScore = std === 0 ? 0 : (numberOfSongsPlayed - mean) / std;
+  const zScore = Math.floor(Math.random() * 9) - 4;
   // do not concat. the scaledColor to the end of the string. This can cause issues:
   // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
   let cellColor: string;
-  if (numberOfSongsPlayed === 0) {
+  if (false && numberOfSongsPlayed === 0) {
     cellColor = 'bg-gray-100 border-gray-300';
   } else if (zScore <= -3) {
     cellColor = 'bg-green-50 border-green-200';
@@ -52,7 +53,7 @@ const DayHeatmap = (props: DayHeatmapProps) => {
       onMouseLeave={() => setIsHover(false)}
     >
       {isHover && (
-        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${numberOfSongsPlayed} songs streamed on ${date}`}</div>
+        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${34} songs streamed on ${date}`}</div>
       )}
     </div>
   );

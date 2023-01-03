@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
 import { DayLookup } from 'spotify-api/models/user';
 import CurrentlyPlaying from './components/CurrentlyPlaying';
+import landing_page_profile_picture from './images/landing_page_profile_picture.jpg'
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
@@ -70,10 +71,10 @@ const Dashboard = () => {
         <div id="dashboardLeft" className="w-1/4">
           <img
             className="rounded-full w-2/3 mx-auto mt-10 mb-4 shadow-md border-3"
-            src={profile?.images && profile.images[0]?.url}
+            src={landing_page_profile_picture}
           ></img>
           <div className="w-full">
-            <div className="mx-auto w-fit text-center text-3xl">{profile?.display_name}</div>
+            <div className="mx-auto w-fit text-center text-3xl">{`Sandy`}</div>
           </div>
 
           <div className="w-full">
