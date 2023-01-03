@@ -22,7 +22,7 @@ function mostListensThisWeek(history: Record<string, DayLookup>): [string, Track
   const trackToListensList: [string, number][] = Array.from(trackToListens).sort((a, b) => b[1] - a[1]);
   const ret: [string, TrackData][] = trackToListensList.slice(0, 10).map(([trackUri, listens]) => {
     const data = trackToInfo.get(trackUri)!;
-    return [trackUri, { ...data, listens: listens } as TrackData];
+    return [trackUri, { ...data, listens: listens }];
   });
   return ret;
 }
