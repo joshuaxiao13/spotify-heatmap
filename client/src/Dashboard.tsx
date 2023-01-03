@@ -33,7 +33,8 @@ const Dashboard = () => {
           console.log(err);
         });
 
-      user.current
+      const updateCurrentSong = async (): Promise<void> => {
+        user.current!
         .getCurrentlyPlayed()
         .then((res) => {
           setCurrentSong(res);
@@ -41,6 +42,11 @@ const Dashboard = () => {
         .catch((err) => {
           console.log(err);
         });
+      }
+
+      updateCurrentSong();
+      setInterval(updateCurrentSong, 60000);
+
     }
   }, []);
 
