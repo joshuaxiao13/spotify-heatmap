@@ -120,7 +120,7 @@ export interface CurrentlyPlayingResponse {
   msg: string;
   name?: string;
   artists?: string[];
-  albumImages?: {};
+  albumImages?: SpotifyApi.ImageObject[];
   previewUrl?: string | null;
 }
 
