@@ -8,11 +8,8 @@ interface CurrentlyPlayingProps {
 
 const CurrentlyPlaying = (props: CurrentlyPlayingProps) => {
   const { data } = props;
-  if (!data) {
-    return <div>Play something...</div>;
-  }
+  const { albumImages, artists, name } = data || {};
 
-  const { albumImages, artists, name } = data;
   return (
     <div className="w-2/3 mx-auto my-6 flex rounded-md shadow-md border-[1px] p-2">
       <div className="w-1/4">
