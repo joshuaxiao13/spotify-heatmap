@@ -52,7 +52,7 @@ const DayHeatmap = (props: DayHeatmapProps) => {
       onMouseLeave={() => setIsHover(false)}
     >
       {isHover && (
-        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${numberOfSongsPlayed} songs streamed on ${date}`}</div>
+        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${numberOfSongsPlayed} streams on ${date}`}</div>
       )}
     </div>
   );

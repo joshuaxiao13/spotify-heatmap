@@ -34,7 +34,7 @@ const groupbyWeek = (data: Record<string, DayLookup>) => {
       songsPlayed: lookupByUrl,
     };
 
-    //Push the current week
+    // Push the current week
     if (currentDate.getDay() === 0 || i === 364) {
       if (i === 364) {
         for (let j = currentDate.getDay() - 1; j >= 0; --j) {
@@ -55,7 +55,7 @@ const groupbyWeek = (data: Record<string, DayLookup>) => {
     currentDate = getPreviousDay(currentDate);
   }
 
-  //weeks were pushed so that recent appears first, reverse to get older weeks first
+  // weeks were pushed so that recent appears first, reverse to get older weeks first
   listensGroupedByWeek.reverse();
   return listensGroupedByWeek;
 };

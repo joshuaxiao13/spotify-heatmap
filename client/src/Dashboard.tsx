@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import YearHeatmap from './heatmap/Year';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import { useSearchParams } from 'react-router-dom';
-import { UserProfileResponse } from 'spotify-api/spotifyRequests';
+import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
 import { DayLookup } from 'spotify-api/models/user';
+import CurrentlyPlaying from './components/CurrentlyPlaying';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
@@ -11,6 +12,7 @@ const Dashboard = () => {
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
+  const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -30,12 +32,25 @@ const Dashboard = () => {
         .catch((err) => {
           console.log(err);
         });
+
+      const updateCurrentSong = async (): Promise<void> => {
+        user
+          .current!.getCurrentlyPlayed()
+          .then((res) => {
+            setCurrentSong(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+
+      updateCurrentSong();
+      setInterval(updateCurrentSong, 60000);
     }
   }, []);
 
   return (
     <div className="w-screen h-screen bg-white">
-      {/* Header */}
       <header id="header" className="w-full h-20 bg-slate-800 flex" style={{ color: 'white' }}>
         <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
           <img
@@ -57,6 +72,10 @@ const Dashboard = () => {
           ></img>
           <div className="w-full">
             <div className="mx-auto w-fit text-center text-3xl">{profile?.display_name}</div>
+          </div>
+
+          <div className="w-full">
+            <CurrentlyPlaying data={currentSong} />
           </div>
         </div>
         <div id="dashboardRight" className="w-3/4">
