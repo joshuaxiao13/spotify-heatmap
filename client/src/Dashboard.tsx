@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import CurrentlyPlaying from './components/CurrentlyPlaying';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import TrackList from './components/TrackList';
-import YearHeatmap from './heatmap/Year';
+import YearHeatmap from './components/heatmap/Year';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
