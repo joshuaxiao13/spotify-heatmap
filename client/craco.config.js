@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
@@ -11,7 +13,12 @@ module.exports = {
           configFile: 'tsconfig.json',
         },
       });
-
+      webpackConfig.plugins = [
+        ...webpackConfig.plugins,
+        new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
+        }),
+      ];
       return webpackConfig;
     },
   },
