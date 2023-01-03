@@ -112,10 +112,10 @@ export default class SpotifyUser {
    * @returns Look-up object with following key-value configuration: date -> spotify_url -> object with listening data specific to track
    * @example
    * const user: SpotifyUser = new SpotifyUser(...);
-   * user.getListeningHistory.then((history) => {
+   * user.getListeningHistory().then((history) => {
    *    const date = new Date();
    *    const spotify_url = 'spotify:track:5wANPM4fQCJwkGd4rN57mH';
-   *    const data = history[date.toDateString()][];
+   *    const data = history[date.toDateString()][spotify_url];
    *    if (!data) console.log("didn't listen today");
    *    else console.log(data.listens);  // print today's listening data for Olivia Rodrigo's "drivers license"
    * });

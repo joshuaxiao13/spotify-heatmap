@@ -3,21 +3,20 @@ import YearHeatmap from './heatmap/Year';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import { useSearchParams } from 'react-router-dom';
 import { UserProfileResponse } from 'spotify-api/spotifyRequests';
+import { DayLookup } from 'spotify-api/models/user';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
 
   const [profile, setProfile] = useState<UserProfileResponse>();
+  const [history, setHistory] = useState<Record<string, DayLookup>>();
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
     const refresh_token = queryParams.get('refresh_token');
     if (access_token && refresh_token) {
       user.current = new SpotifyUser(access_token, refresh_token);
-      user.current.getRecentlyPlayed().then((res) => {
-        console.log(res);
-      });
 
       user.current.profile.then((res) => {
         setProfile(res);
@@ -26,7 +25,7 @@ const Dashboard = () => {
       user.current
         .getListeningHistory()
         .then((res) => {
-          console.log('hello:', res);
+          setHistory(res);
         })
         .catch((err) => {
           console.log(err);
@@ -62,7 +61,10 @@ const Dashboard = () => {
         </div>
         <div id="dashboardRight" className="w-3/4">
           <div id="heatmap" className="w-fit mx-auto my-10">
-            <YearHeatmap />
+            <YearHeatmap data={history || {}} />
+            <p className="text-xs text-gray-400">
+              *heatmap only displays data logged since registration with spotify heatmap.
+            </p>
           </div>
           <div
             id="recentActivity"

@@ -1,60 +1,61 @@
-interface Song {
-  title: string;
-  artist: string;
-  uri: string;
-  plays: number;
-}
+import { DayLookup } from 'spotify-api/models/user';
+import { useState } from 'react';
 
 export interface Day {
   date: string;
   numberOfSongsPlayed: number;
-  songsPlayed: Song[];
+  minsPlayed: number;
+  songsPlayed: DayLookup;
 }
 
-const DayHeatmap = (props: { data: Day }) => {
-  const { numberOfSongsPlayed } = props.data;
-  // scaledColor must be in the set [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
-  const scaledColor = Math.max(Math.floor(Math.min(0.9, numberOfSongsPlayed / 50) * 10) * 100, 50);
+interface DayHeatmapProps {
+  data: Day;
+  stats: {
+    mean: number;
+    std: number;
+  };
+}
 
+const DayHeatmap = (props: DayHeatmapProps) => {
+  const [isHover, setIsHover] = useState(false);
+
+  const { data, stats } = props;
+  const { mean, std } = stats;
+  const { date, numberOfSongsPlayed, minsPlayed } = data;
+
+  const zScore = std === 0 ? 0 : (numberOfSongsPlayed - mean) / std;
   // do not concat. the scaledColor to the end of the string. This can cause issues:
   // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
   let cellColor: string;
-  switch (scaledColor) {
-    case 50:
-      cellColor = numberOfSongsPlayed !== 0 ? 'bg-green-50 border-green-200' : 'bg-gray-100 border-gray-300';
-      break;
-    case 100:
-      cellColor = 'bg-green-100 border-green-300';
-      break;
-    case 200:
-      cellColor = 'bg-green-200 border-green-400';
-      break;
-    case 300:
-      cellColor = 'bg-green-300 border-green-500';
-      break;
-    case 400:
-      cellColor = 'bg-green-400 border-green-600';
-      break;
-    case 500:
-      cellColor = 'bg-green-500 border-green-700';
-      break;
-    case 600:
-      cellColor = 'bg-green-600 border-green-800';
-      break;
-    case 700:
-      cellColor = 'bg-green-700 border-green-900';
-      break;
-    case 800:
-      cellColor = 'bg-green-800 border-gray-900';
-      break;
-    case 900:
-      cellColor = 'bg-green-900 border-black';
-      break;
-    default:
-      cellColor = 'bg-white';
+  if (numberOfSongsPlayed === 0) {
+    cellColor = 'bg-gray-100 border-gray-300';
+  } else if (zScore <= -3) {
+    cellColor = 'bg-green-50 border-green-200';
+  } else if (zScore <= -2) {
+    cellColor = 'bg-green-100 border-green-300';
+  } else if (zScore <= -1) {
+    cellColor = 'bg-green-200 border-green-500';
+  } else if (zScore <= 0) {
+    cellColor = 'bg-green-400 border-green-600';
+  } else if (zScore <= 1) {
+    cellColor = 'bg-green-500 border-green-700';
+  } else if (zScore <= 2) {
+    cellColor = 'bg-green-700 border-green-900';
+  } else {
+    cellColor = 'bg-green-900 border-black';
   }
 
-  return <div className={`w-4 h-4 m-1 rounded-sm border-[1px] ${cellColor}`}></div>;
+  return (
+    <div
+      className={`w-4 h-4 m-1 rounded-sm border-[1px] ${cellColor} ${isHover && 'border-black'}`}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      {isHover && (
+        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${numberOfSongsPlayed} songs streamed on ${date}`}</div>
+      )}
+    </div>
+  );
 };
 
 export default DayHeatmap;
