@@ -50,7 +50,7 @@ export default class SpotifyUser {
   private async run<T>(generatePromise: (access_token: string) => Promise<T>): Promise<T> {
     return generatePromise(this.access_token).catch(async (err: any) => {
       console.log('error:', err);
-      switch (err.response.data.msg) {
+      switch (err.response.data.error?.message || err.response.data.error) {
         /**
          * TODO: might need to change the way errors are handled
          */
@@ -67,8 +67,11 @@ export default class SpotifyUser {
             console.log('new token:', this.access_token);
             return this.run(generatePromise);
           } catch (e: any) {
-            if (e.msg == 'invalid_grant') {
+            const msg = e.response.data.error?.message || e.response.data.error;
+            if (msg == 'invalid_grant') {
               console.log('Invalid refresh token');
+            } else if (msg == 'invalid_client') {
+              console.log('Invalid client id or client secret');
             } else {
               console.log('Unknown error');
               console.log(e);

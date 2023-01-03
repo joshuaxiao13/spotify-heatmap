@@ -3,12 +3,15 @@ import YearHeatmap from './heatmap/Year';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import { useSearchParams } from 'react-router-dom';
 import { UserProfileResponse } from 'spotify-api/spotifyRequests';
+import { DayLookup } from 'spotify-api/models/user';
+import TrackList from './components/TrackList';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
 
   const [profile, setProfile] = useState<UserProfileResponse>();
+  const [history, setHistory] = useState<Record<string, DayLookup>>();
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -26,7 +29,7 @@ const Dashboard = () => {
       user.current
         .getListeningHistory()
         .then((res) => {
-          console.log('hello:', res);
+          setHistory(res);
         })
         .catch((err) => {
           console.log(err);
@@ -36,11 +39,10 @@ const Dashboard = () => {
 
   return (
     <div className="w-screen h-screen bg-white">
-      {/* Header */}
       <header id="header" className="w-full h-20 bg-slate-800 flex" style={{ color: 'white' }}>
         <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
           <img
-            id="logo"
+            id="profile-image"
             className="w-8 h-8"
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png"
           />
@@ -51,16 +53,16 @@ const Dashboard = () => {
       </header>
 
       <div id="dashboard" className="w-full flex">
-        <div id="dashboardLeft" className="w-1/4">
+        <div id="dashboardLeft" className="w-1/5">
           <img
-            className="rounded-full w-2/3 mx-auto mt-10 mb-4 shadow-md border-3"
+            className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
             src={profile?.images && profile.images[0]?.url}
           ></img>
           <div className="w-full">
-            <div className="mx-auto w-fit text-center text-3xl">{profile?.display_name}</div>
+            <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
           </div>
         </div>
-        <div id="dashboardRight" className="w-3/4">
+        <div id="dashboardRight" className="w-4/5">
           <div id="heatmap" className="w-fit mx-auto my-10">
             <YearHeatmap />
           </div>
@@ -70,6 +72,7 @@ const Dashboard = () => {
           >
             Recent Activity
           </div>
+          <TrackList history={history} />
         </div>
       </div>
     </div>

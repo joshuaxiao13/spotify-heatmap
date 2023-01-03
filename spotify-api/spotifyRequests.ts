@@ -2,10 +2,6 @@ import axios from 'axios';
 import { CLIENT_ID, CLIENT_SECRET } from './constants';
 import { queryParamsStringify } from './utils';
 
-interface Error {
-  msg: string;
-}
-
 export interface UserProfileResponse {
   display_name: string | undefined;
   id: string;
@@ -32,12 +28,7 @@ export const refreshAccessToken = async (refresh_token: string): Promise<string>
       return response.data.access_token;
     })
     .catch((err) => {
-      if (err.response.data.error === 'invalid_grant') {
-        const error: Error = {
-          msg: err.response.data.error,
-        };
-        throw error;
-      }
+      throw err;
     });
 };
 
@@ -68,10 +59,7 @@ export const fetchUserProfile = async (accessToken: string): Promise<UserProfile
       return profile;
     })
     .catch((err) => {
-      const error: Error = {
-        msg: err.response.data.error.message,
-      };
-      throw error;
+      throw err;
     });
 };
 
@@ -109,10 +97,7 @@ export const fetchRecentlyPlayed = async (accessToken: string): Promise<Track[]>
       return tracks;
     })
     .catch((err) => {
-      const error: Error = {
-        msg: err.response.data.error.message,
-      };
-      throw error;
+      throw err;
     });
 };
 
@@ -161,9 +146,6 @@ export const fetchCurrentlyPlayed = async (accessToken: string): Promise<Current
       }
     })
     .catch((err) => {
-      const error: Error = {
-        msg: err.response.data.error.message,
-      };
-      throw error;
+      throw err;
     });
 };
