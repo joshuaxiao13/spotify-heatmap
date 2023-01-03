@@ -1,13 +1,18 @@
 import DayHeatmap, { Day } from './Day';
 
-export type Week = [Day, Day, Day, Day, Day, Day, Day];
+export type Week = Day[];
 
-const WeekHeatmap = (props: { data: Week }) => {
-  const { data } = props;
+interface WeekHeatmapProps {
+  data: Week;
+  stats: { mean: number; std: number };
+}
+
+const WeekHeatmap = (props: WeekHeatmapProps) => {
+  const { data, stats } = props;
   return (
     <div className="w-fit h-fit">
       {data.map((day) => {
-        return <DayHeatmap data={day} />;
+        return <DayHeatmap data={day} stats={stats} />;
       })}
     </div>
   );

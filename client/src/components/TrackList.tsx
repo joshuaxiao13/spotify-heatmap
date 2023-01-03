@@ -34,7 +34,7 @@ interface TrackListProps {
 const TrackList = ({ history }: TrackListProps) => {
   if (!history) return <></>;
   return (
-    <div className="w-2/3 pb-10 pt-5 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
+    <div className="w-2/3 pb-8 pt-5 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
       <table className="border-collapse table-auto w-full">
         <thead>
           <tr className="border-b text-left font-medium text-gray-500">

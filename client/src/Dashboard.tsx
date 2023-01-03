@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import YearHeatmap from './heatmap/Year';
-import SpotifyUser from 'spotify-api/spotifyUser';
-import { useSearchParams } from 'react-router-dom';
-import { UserProfileResponse } from 'spotify-api/spotifyRequests';
+import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
 import { DayLookup } from 'spotify-api/models/user';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import CurrentlyPlaying from './components/CurrentlyPlaying';
+import SpotifyUser from 'spotify-api/spotifyUser';
 import TrackList from './components/TrackList';
+import YearHeatmap from './heatmap/Year';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
@@ -12,15 +13,13 @@ const Dashboard = () => {
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
+  const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
     const refresh_token = queryParams.get('refresh_token');
     if (access_token && refresh_token) {
       user.current = new SpotifyUser(access_token, refresh_token);
-      user.current.getRecentlyPlayed().then((res) => {
-        console.log(res);
-      });
 
       user.current.profile.then((res) => {
         setProfile(res);
@@ -34,6 +33,20 @@ const Dashboard = () => {
         .catch((err) => {
           console.log(err);
         });
+
+      const updateCurrentSong = async (): Promise<void> => {
+        user
+          .current!.getCurrentlyPlayed()
+          .then((res) => {
+            setCurrentSong(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+
+      updateCurrentSong();
+      setInterval(updateCurrentSong, 60000);
     }
   }, []);
 
@@ -61,10 +74,17 @@ const Dashboard = () => {
           <div className="w-full">
             <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
           </div>
+
+          <div className="w-full">
+            <CurrentlyPlaying data={currentSong} />
+          </div>
         </div>
         <div id="dashboardRight" className="w-4/5">
           <div id="heatmap" className="w-fit mx-auto my-10">
-            <YearHeatmap />
+            <YearHeatmap data={history || {}} />
+            <p className="text-xs text-gray-400">
+              *heatmap only displays data logged since registration with spotify heatmap.
+            </p>
           </div>
           <div
             id="recentActivity"
