@@ -70,6 +70,7 @@ export interface Track {
   uri: string;
   url: string;
   played_at: Date;
+  spotify_id: string;
 }
 
 export const fetchRecentlyPlayed = async (accessToken: string): Promise<Track[]> => {
@@ -92,6 +93,7 @@ export const fetchRecentlyPlayed = async (accessToken: string): Promise<Track[]>
           uri: item.track.uri,
           url: item.track.external_urls.spotify,
           played_at: new Date(item.played_at),
+          spotify_id: item.track.id
         })
       );
       return tracks;

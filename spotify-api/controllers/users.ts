@@ -152,6 +152,7 @@ export const updateHistory = async (req: Request<{}, any, {}, { id: string }>, r
                 artists: track.artists,
                 duration_ms: track.duration_ms,
                 listens: 1,
+                spotify_id: track.spotify_id
               };
             }
 
