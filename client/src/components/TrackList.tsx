@@ -34,17 +34,17 @@ interface TrackListProps {
 const TrackList = ({ history }: TrackListProps) => {
   if (!history) return <></>;
   return (
-    <div className="w-2/3 pb-8 pt-5 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
+    <div className="w-2/3 pt-5 my-2 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
       <table className="border-collapse table-auto w-full">
         <thead>
-          <tr className="border-b text-left font-medium text-gray-500">
+          <tr className="border-b text-left text-sm font-medium text-gray-500">
             <th className="px-5 py-2">#</th>
             <th className="px-5 py-2">Track Title</th>
             <th className="px-5 py-2">Artist</th>
             <th className="px-5 py-2">Listens</th>
           </tr>
         </thead>
-        <tbody className="bg-white text-lg text-gray-600 shadow-md">
+        <tbody className="bg-white text-gray-600 shadow-md text-sm">
           {history &&
             mostListensThisWeek(history).map(([trackUri, trackData], id) => {
               return (

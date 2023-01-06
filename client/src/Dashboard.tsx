@@ -86,12 +86,9 @@ const Dashboard = () => {
               *heatmap only displays data logged since registration with spotify heatmap.
             </p>
           </div>
-          <div
-            id="recentActivity"
-            className="w-fit mx-auto bg-gray-50 my-10 rounded-xl text-center p-2 shadow-md border-2 hover:scale-105"
-          >
+          <h2 id="recentActivity" className='text-center'>
             Recent Activity
-          </div>
+          </h2>
           <TrackList history={history} />
         </div>
       </div>

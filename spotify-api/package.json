@@ -5,7 +5,7 @@
   "main": ".",
   "scripts": {
     "start": "nodemon app.ts",
-    "start:server": "SET NODE_ENV=development && nodemon server.ts",
+    "start:server": "NODE_ENV=development nodemon server.ts",
     "build:frontend": "cd ../client && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
