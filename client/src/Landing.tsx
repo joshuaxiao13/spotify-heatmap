@@ -1,14 +1,14 @@
 import Header from './components/Header';
 import YearHeatmap from './components/heatmap/Year';
 
-import spotify_logo_black from './images/spotify_logo_black.png';
+import spotify_logo_black from './assets/Spotify_Icon_RGB_Black.png';
 
 const Landing = () => {
   return (
     <div className="bg-white w-screen h-screen">
       <Header />
       <div className="w-full h-3/5 flex flex-col items-center">
-        <p className="h-fit my-auto text-2xl">See what you're listening to the most, anytime in the year.</p>
+        <p className="h-fit my-auto text-2xl">See what you're listening to the most, anytime of the year.</p>
         <p className="w-fit mx-auto mb-2">
           Eagerly waiting for your yearly Spotify Wrapped? Spotify Heatmap allows you to view much more.
         </p>
