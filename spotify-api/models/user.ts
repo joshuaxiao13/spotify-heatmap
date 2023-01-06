@@ -5,6 +5,7 @@ export interface TrackData {
   artists: string[];
   duration_ms: number;
   listens: number;
+  spotify_id: string;
 }
 
 export type DayLookup = Record<string, TrackData>;

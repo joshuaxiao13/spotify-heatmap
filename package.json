@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:all": "npm i && cd client && npm i && cd ../spotify-api && npm i"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/joshuaxiao13/spotify-heatmap#readme",
   "devDependencies": {
-    "prettier": "2.8.1"
+    "prettier": "2.8.1",
+    "@types/node": "^18.11.17",
+    "typescript": "^4.9.4"
   }
 }

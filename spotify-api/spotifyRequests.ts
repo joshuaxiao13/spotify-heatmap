@@ -70,6 +70,7 @@ export interface Track {
   uri: string;
   url: string;
   played_at: Date;
+  spotify_id: string;
 }
 
 export const fetchRecentlyPlayed = async (accessToken: string): Promise<Track[]> => {
@@ -92,6 +93,7 @@ export const fetchRecentlyPlayed = async (accessToken: string): Promise<Track[]>
           uri: item.track.uri,
           url: item.track.external_urls.spotify,
           played_at: new Date(item.played_at),
+          spotify_id: item.track.id
         })
       );
       return tracks;
@@ -149,3 +151,16 @@ export const fetchCurrentlyPlayed = async (accessToken: string): Promise<Current
       throw err;
     });
 };
+
+export const fetchTrackImagesBySpotifyId = async (accessToken:string, spotify_id: string): Promise<SpotifyApi.ImageObject[]> => {
+  return axios.get<SpotifyApi.TrackObjectFull>(`https://api.spotify.com/v1/tracks/${spotify_id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  }).then((response) => {
+    const data = response.data;
+    return data.album.images
+  }).catch((err)=> {
+    throw err;
+  })
+}

@@ -21,7 +21,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../client/build/index.html'));
 });
 
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
     mongoose.set('strictQuery', false);
     await mongoose.connect(process.env.MONGO_URI!);

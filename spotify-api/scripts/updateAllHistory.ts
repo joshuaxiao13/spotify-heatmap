@@ -38,6 +38,7 @@ const updateAllUsers = async (): Promise<void> => {
                     artists: track.artists,
                     duration_ms: track.duration_ms,
                     listens: 1,
+                    spotify_id: track.spotify_id
                   };
                 }
 

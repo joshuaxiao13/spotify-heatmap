@@ -19,7 +19,7 @@ app.use('/api/v1', user);
 
 const PORT = 8000;
 
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
     mongoose.set('strictQuery', false);
     await mongoose.connect(process.env.MONGO_URI!);
