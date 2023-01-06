@@ -31,7 +31,7 @@ const createUser = async (
   }
 };
 
-export const loginUser = async (req: Request<{}, any, {}, { id: string; refresh_token: string }>, res: Response) => {
+export const loginUser = async (req: Request<{}, any, {}, { id: string; refresh_token: string }>, res: Response): Promise<void> => {
   if (!req.headers.authorization) {
     res.status(401).send({ msg: 'Authorization missing' });
     return;
