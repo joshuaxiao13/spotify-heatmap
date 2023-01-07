@@ -108,7 +108,7 @@ const YearHeatmap = (props: YearHeatmapProps) => {
   return (
     <div className=" bg-white flex w-fit h-fit p-3 rounded-sm border-[1px]">
       {year.map((week) => (
-        <WeekHeatmap data={week} stats={stats}></WeekHeatmap>
+        <WeekHeatmap key={week[0]?.date} data={week} stats={stats}></WeekHeatmap>
       ))}
     </div>
   );
