@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   return (
     <div className="w-screen h-screen bg-white">
-      <Header />
+      <Header user={user} />
 
       <div id="dashboard" className="w-full flex">
         <div id="dashboardLeft" className="w-1/5">
