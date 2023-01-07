@@ -154,17 +154,23 @@ export const fetchCurrentlyPlayed = async (accessToken: string): Promise<Current
 
 export const fetchTrackImagesBySpotifyId = async (
   accessToken: string,
-  spotify_id: string
-): Promise<SpotifyApi.ImageObject[]> => {
+  spotify_ids: string[]
+): Promise<SpotifyApi.ImageObject[][]> => {
+  // maximum 50 ids per request
   return axios
-    .get<SpotifyApi.TrackObjectFull>(`https://api.spotify.com/v1/tracks/${spotify_id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
+    .get<SpotifyApi.MultipleTracksResponse>(
+      queryParamsStringify('https://api.spotify.com/v1/tracks', {
+        ids: spotify_ids.join(','),
+      }),
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
     .then((response) => {
-      const data = response.data;
-      return data.album.images;
+      const tracks = response.data.tracks;
+      return tracks.map((item) => item.album.images);
     })
     .catch((err) => {
       throw err;
