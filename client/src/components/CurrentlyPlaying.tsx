@@ -9,6 +9,8 @@ interface CurrentlyPlayingProps {
 const CurrentlyPlaying = ({ data }: CurrentlyPlayingProps) => {
   const { albumImages, artists, name } = data || {};
 
+  if (!name) return <></>;
+
   return (
     <div className="w-2/3 mx-auto my-6 flex rounded-md shadow-md border-[1px] p-2">
       <div className="w-1/4 m-auto">
