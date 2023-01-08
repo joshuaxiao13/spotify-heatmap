@@ -31,7 +31,10 @@ const createUser = async (
   }
 };
 
-export const loginUser = async (req: Request<{}, any, {}, { id: string; refresh_token: string }>, res: Response): Promise<void> => {
+export const loginUser = async (
+  req: Request<{}, any, {}, { id: string; refresh_token: string }>,
+  res: Response
+): Promise<void> => {
   if (!req.headers.authorization) {
     res.status(401).send({ msg: 'Authorization missing' });
     return;
@@ -152,7 +155,7 @@ export const updateHistory = async (req: Request<{}, any, {}, { id: string }>, r
                 artists: track.artists,
                 duration_ms: track.duration_ms,
                 listens: 1,
-                spotify_id: track.spotify_id
+                spotify_id: track.spotify_id,
               };
             }
 

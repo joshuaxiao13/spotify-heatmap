@@ -5,6 +5,7 @@ import {
   CurrentlyPlayingResponse,
   fetchCurrentlyPlayed,
   fetchRecentlyPlayed,
+  fetchTrackImagesBySpotifyId,
   fetchUserProfile,
   refreshAccessToken,
   Track,
@@ -108,6 +109,15 @@ export default class SpotifyUser {
    */
   public async getUserProfile(): Promise<UserProfileResponse> {
     return this.profile;
+  }
+
+  /**
+   * Get album covers by spotify ids
+   * @param spotifyIdList A list of a maximum of 50 spotify tracks ids
+   * @returns list of images objects with the album cover-art
+   */
+  public async getTrackImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][]> {
+    return this.run((token: string) => fetchTrackImagesBySpotifyId(token, spotifyIdList));
   }
 
   /**
