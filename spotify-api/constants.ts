@@ -1,5 +1,5 @@
 export const PORT: string | number = process.env.PORT || 3000;
-export const REDIRECT_URI: string = process.env.REDIRECT_URI || `http://localhost:${PORT}/callback`;
+export const REDIRECT_URI: string = process.env.REACT_REDIRECT_URI || `http://localhost:${PORT}/callback`;
 // TODO: 8000 for dev
 export const API_KEY: string =
   process.env.API_KEY || `http://localhost:${process.env.NODE_ENV === 'development' ? 8000 : PORT}/api/v1`;

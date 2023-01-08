@@ -47,7 +47,7 @@ const DayHeatmap = (props: DayHeatmapProps) => {
 
   return (
     <div
-      className={`w-4 h-4 m-1 rounded-sm border-[1px] ${cellColor} ${isHover && 'border-black'}`}
+      className={`w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover && 'border-black'}`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
