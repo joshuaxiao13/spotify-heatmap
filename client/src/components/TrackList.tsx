@@ -64,36 +64,41 @@ const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
   if (!(history && fetchTrackImagesById) || !trackList) return <></>;
 
   return (
-    <div className="w-2/3 pt-5 my-2 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
-      <table className="border-collapse table-auto w-full">
-        <thead>
-          <tr className="border-b text-left text-sm font-medium text-gray-500">
-            <th className="px-5 py-2">#</th>
-            <th className="px-5 py-2">Track Title</th>
-            <th className="px-5 py-2">Artist</th>
-            <th className="px-5 py-2">Listens</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white text-gray-600 shadow-md text-sm">
-          {history &&
-            trackList.map(([{ uri, images }, trackData], idx) => {
-              return (
-                <tr className="border-b border-[1px]">
-                  <td className="px-5 py-2">{idx + 1}</td>
-                  <td className="px-5 py-2 flex">
-                    <img src={images[0].url} className="h-10 w-10 shadow-sm rounded-sm"></img>
-                    <a className="my-auto ml-2" href={uri}>
-                      {trackData.name}
-                    </a>
-                  </td>
-                  <td className="px-5 py-2">{trackData.artists.join(', ')}</td>
-                  <td className="px-5 py-2">{trackData.listens}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <h2 id="recentActivity" className="text-center">
+        Recent Activity This Week
+      </h2>
+      <div className="w-2/3 pt-5 my-2 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
+        <table className="border-collapse table-auto w-full">
+          <thead>
+            <tr className="border-b text-left text-sm font-medium text-gray-500">
+              <th className="px-5 py-2">#</th>
+              <th className="px-5 py-2">Track Title</th>
+              <th className="px-5 py-2">Artist</th>
+              <th className="px-5 py-2">Listens</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white text-gray-600 shadow-md text-sm">
+            {history &&
+              trackList.map(([{ uri, images }, trackData], idx) => {
+                return (
+                  <tr className="border-b border-[1px]">
+                    <td className="px-5 py-2">{idx + 1}</td>
+                    <td className="px-5 py-2 flex">
+                      <img src={images[0].url} className="h-10 w-10 shadow-sm rounded-sm my-auto"></img>
+                      <a className="my-auto ml-2" href={uri}>
+                        {trackData.name}
+                      </a>
+                    </td>
+                    <td className="px-5 py-2">{trackData.artists.join(', ')}</td>
+                    <td className="px-5 py-2">{trackData.listens}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };
 
