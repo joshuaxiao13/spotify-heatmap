@@ -11,7 +11,6 @@ async function mostListensThisWeek(
   const trackToListens = new Map<string, number>();
   const trackToInfo = new Map<string, TrackData>();
   do {
-    console.log(currentDate.toDateString());
     const lookup: DayLookup = history[currentDate.toDateString()];
     if (lookup) {
       Object.entries(lookup).forEach(([trackUri, trackData]) => {
@@ -47,15 +46,11 @@ interface TrackListProps {
 const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
   const [trackList, setTrackList] = useState<[{ uri: string; images: SpotifyApi.ImageObject[] }, TrackData][]>();
 
-  console.log(history, fetchTrackImagesById);
-
   useEffect(() => {
     if (history && fetchTrackImagesById) {
-      console.log('creating most listened list');
       mostListensThisWeek(history, fetchTrackImagesById)
         .then((res) => setTrackList(res))
         .catch((e) => {
-          console.log('You fucked up');
           console.log(e);
         });
     }
@@ -85,7 +80,11 @@ const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
                   <tr className="border-b border-[1px]">
                     <td className="px-5 py-2">{idx + 1}</td>
                     <td className="px-5 py-2 flex">
-                      <img src={images[0].url} className="h-10 w-10 shadow-sm rounded-sm my-auto"></img>
+                      <img
+                        src={images[0].url}
+                        alt="album-cover"
+                        className="h-10 w-10 shadow-sm rounded-sm my-auto"
+                      ></img>
                       <a className="my-auto ml-2" href={uri}>
                         {trackData.name}
                       </a>
