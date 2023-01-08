@@ -76,12 +76,7 @@ const Dashboard = () => {
               *heatmap only displays data logged since registration with spotify heatmap.
             </p>
           </div>
-          <TrackList
-            history={history}
-            fetchTrackImagesById={
-              user.current ? (spotifyIds) => user.current!.getTrackImagesById(spotifyIds) : undefined
-            }
-          />
+          <TrackList history={history} fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)} />
         </div>
       </div>
     </div>
