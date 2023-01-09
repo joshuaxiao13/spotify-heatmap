@@ -47,7 +47,6 @@ async function mostListensThisWeek(
     }, [])
     .slice(0, 10);
 
-  console.log('top tracks:', topTracks);
   const [albumImageObjects, artistImageObjects] = await Promise.all([
     fetchTrackImagesById(topTracks.map(([_, data]) => data.spotify_id)),
     fetchArtistImagesById(topTracks.map(([_, data]) => data.spotify_id)),
