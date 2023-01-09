@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DayLookup, TrackData } from 'spotify-api/models/user';
 import { ArtistPlaceHolder } from '../icons/ArtistPlaceHolder';
+import HoverPopup from './HoverPopup';
 
 type fetchTrackImagesFun = (spotifyIdList: string[]) => Promise<SpotifyApi.ImageObject[][]>;
 
@@ -71,6 +72,7 @@ interface TrackListProps {
 
 const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: TrackListProps) => {
   const [trackList, setTrackList] = useState<mostListensThisWeekResponse>();
+  const [artistHoverState, setArtistHoverState] = useState<{ [k: string]: Boolean }>();
 
   useEffect(() => {
     if (history && fetchTrackImagesById) {
@@ -101,10 +103,10 @@ const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: Tra
           </thead>
           <tbody className="bg-white text-gray-600 shadow-md text-sm">
             {history &&
-              trackList.map(([{ uri, images }, trackData], idx) => {
+              trackList.map(([{ uri, images }, trackData], idx1) => {
                 return (
                   <tr className="border-b border-[1px]">
-                    <td className="px-5 py-2">{idx + 1}</td>
+                    <td className="px-5 py-2">{idx1 + 1}</td>
                     <td className="px-5 py-2">
                       <a className="my-auto ml-2 flex gap-x-2" href={uri}>
                         <img
@@ -117,18 +119,29 @@ const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: Tra
                     </td>
                     <td className="px-5 py-2">
                       <div className="flex -space-x-4">
-                        {images.artists.map((artistImageObj, idx) => {
-                          if (!artistImageObj[0]) {
-                            return <ArtistPlaceHolder />;
-                          } else {
-                            return (
-                              <img
-                                src={artistImageObj[0].url}
-                                alt={`artist ${trackData.artists[idx]}`}
-                                className="h-10 w-10 rounded-full object-cover border-2 border-white dark:border-gray-800"
-                              ></img>
-                            );
-                          }
+                        {images.artists.map((artistImageObj, idx2) => {
+                          const artistName = trackData.artists[idx2];
+                          const id = `artist-${idx1}-${idx2}`;
+                          return (
+                            <div
+                              onMouseEnter={() => setArtistHoverState((prev) => ({ ...prev, [id]: true }))}
+                              onMouseLeave={() => setArtistHoverState((prev) => ({ ...prev, [id]: false }))}
+                            >
+                              {artistHoverState && artistHoverState[id] && (
+                                <HoverPopup textList={[artistName]}></HoverPopup>
+                              )}
+                              {!artistImageObj[0] ? (
+                                <ArtistPlaceHolder id={id} />
+                              ) : (
+                                <img
+                                  id={id}
+                                  src={artistImageObj[0].url}
+                                  alt={`artist ${artistName}`}
+                                  className="h-10 w-10 rounded-full object-cover border-2 border-white dark:border-gray-800"
+                                />
+                              )}
+                            </div>
+                          );
                         })}
                       </div>
                     </td>

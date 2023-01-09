@@ -1,5 +1,6 @@
 import { DayLookup } from 'spotify-api/models/user';
 import { useState } from 'react';
+import HoverPopup from '../HoverPopup';
 
 export interface Day {
   date: string;
@@ -45,14 +46,33 @@ const DayHeatmap = (props: DayHeatmapProps) => {
     cellColor = 'bg-green-900 border-black';
   }
 
+  const formatMinutes = (mins: number): string => {
+    const hours = Math.floor(mins / 60);
+    const minutes = Math.floor(mins % 60);
+    let ret: string = '';
+    if (hours > 0) ret += hours + ' hr';
+    if (minutes > 0) {
+      if (ret.length > 0) ret += ' ';
+      ret += minutes + ' min';
+    }
+    return ret;
+  };
+
   return (
     <div
-      className={`w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover && 'border-black'}`}
+      className={`w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover ? 'border-black' : ''}`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
       {isHover && (
-        <div className="bg-black text-white p-2 fixed ml-5 rounded-sm first-letter text-xs">{`${numberOfSongsPlayed} streams on ${date}`}</div>
+        <HoverPopup
+          textList={
+            [
+              `${numberOfSongsPlayed} streams on ${date}`,
+              minsPlayed > 0 && `Listened ${formatMinutes(minsPlayed)}`,
+            ].filter((text) => text) as string[]
+          }
+        />
       )}
     </div>
   );
