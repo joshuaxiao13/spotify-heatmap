@@ -2,8 +2,10 @@ import Header from './components/Header';
 import YearHeatmap from './components/heatmap/Year';
 
 import spotify_logo_black from './assets/Spotify_Icon_RGB_Black.png';
+import genExampleData from './LandingHeatmap';
 
 const Landing = () => {
+  const data = genExampleData();
   return (
     <div className="bg-white w-screen h-screen">
       <Header />
@@ -25,7 +27,7 @@ const Landing = () => {
       </div>
       <div className="w-full flex flex-col">
         <div className="w-fit h-fit m-auto shadow-md">
-          <YearHeatmap data={{}} />
+          <YearHeatmap data={data} />
         </div>
       </div>
     </div>
