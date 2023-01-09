@@ -180,10 +180,6 @@ export default class SpotifyUser {
    * or deny access from the /login page of the app
    */
   public deleteUser(): void {
-    // testing
-    console.log('deleting user test...');
-    return;
-    //
     this.profile.then((profile) => {
       const deleteUserFromDB = async (access_token: string): Promise<void> => {
         return axios.delete(
