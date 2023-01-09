@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [history, setHistory] = useState<Record<string, DayLookup>>();
   const [historyForTable, setHistoryForTable] = useState<Record<string, DayLookup>>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
-  const [show, setShow] = useState(false);
+  const [isModalShow, setIsModalShow] = useState(false); //modal
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -62,9 +62,9 @@ const Dashboard = () => {
   return (
     <>
       <Modal
-        show={show}
-        onClose={() => setShow(false)}
-        title={'Delete User Data'}
+        show={isModalShow}
+        onClose={() => setIsModalShow(false)}
+        title={`Delete User Data`}
         content={
           <>
             Will remove data stored on our database for your account. This data allows Spotify Heatmap to view your play
@@ -78,7 +78,7 @@ const Dashboard = () => {
             >
               https://www.spotify.com/us/account/apps/
             </a>{' '}
-            or deny access from the spotify app authorization page.`
+            or deny access from the spotify app authorization redirection when you login.
           </>
         }
         buttonText={'Confirm'}
@@ -90,12 +90,14 @@ const Dashboard = () => {
         }}
       />
       <div className="w-screen h-screen bg-white">
-        <Header deleteUserHandler={user.current?.deleteUser.bind(user.current)} showModal={() => setShow(true)} />
+        <Header
+          deleteUserHandler={user.current?.deleteUser.bind(user.current)}
+          showModal={() => setIsModalShow(true)}
+        />
 
         <div id="dashboard" className="w-full flex">
           <div id="dashboardLeft" className="w-1/5">
             <img
-              alt="user-spotify-profile"
               className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
               src={profile?.images && profile.images[0]?.url}
             ></img>
