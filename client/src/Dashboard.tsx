@@ -54,10 +54,10 @@ const Dashboard = () => {
   return (
     <div className="w-screen h-screen bg-white">
       <Header />
-
       <div id="dashboard" className="w-full flex">
         <div id="dashboardLeft" className="w-1/5">
           <img
+            alt="user-spotify-profile"
             className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
             src={profile?.images && profile.images[0]?.url}
           ></img>
@@ -78,9 +78,8 @@ const Dashboard = () => {
           </div>
           <TrackList
             history={history}
-            fetchTrackImagesById={
-              user.current ? (spotifyIds) => user.current!.getTrackImagesById(spotifyIds) : undefined
-            }
+            fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
+            fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
           />
         </div>
       </div>
