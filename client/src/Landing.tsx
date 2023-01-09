@@ -16,11 +16,11 @@ const Landing = () => {
           <li>A personal heatmap detailing daily listens in the last year</li>
           <li>A ranking of your most streamed songs in the last 7 days</li>
         </ul>
-        <div className="h-fit w-fit m-auto rounded-md bg-green-500 p-3 shadow-md flex">
-          <a className="h-fit my-auto" href="/login">
-            Login With Spotify
+        <div className="h-fit w-fit m-auto rounded-md bg-green-500 p-3 shadow-md">
+          <a className="h-fit my-auto flex gap-x-0" href="/login">
+            <span>Login With Spotify</span>
+            <img className="w-6 h-6 ml-2 my-auto" src={spotify_logo_black}></img>
           </a>
-          <img className="w-6 h-6 ml-2 my-auto" src={spotify_logo_black}></img>
         </div>
       </div>
       <div className="w-full flex flex-col">

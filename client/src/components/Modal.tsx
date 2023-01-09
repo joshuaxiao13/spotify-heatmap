@@ -9,18 +9,28 @@ interface ModalProps {
 
 const Modal = (props: ModalProps) => {
   const { show, onClose, title, content } = props;
+  if (!show) return <></>;
+  console.log('SHOWING');
   return (
-    <div className={`modal ${show ? 'show' : ''} z-50`} onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h4 className="modal-title">{title}</h4>
+    <div
+      id="modal"
+      className="fixed left-0 top-0 right-0 bottom-0 bg-modal flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div id="modal-content" className="w-[500px] bg-white">
+        <div id="modal-header" className="p-[10px]">
+          <h4 id="modal-title" className="m-0">
+            {title}
+          </h4>
         </div>
-      </div>
-      <div className="modal-body">{content}</div>
-      <div className="modal-footer">
-        <button className="button" onClick={onClose}>
-          Close
-        </button>
+        <div id="modal-body" className="p-[10px] border-t border-b  border-solid border-white">
+          {content}
+        </div>
+        <div id="modal-footer" className="p-[10px]">
+          <button className="button" onClick={onClose}>
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

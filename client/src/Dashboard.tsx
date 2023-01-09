@@ -54,46 +54,47 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-white">
+    <>
       <Modal
-        show={show}
+        show={true}
         onClose={() => setShow(false)}
         title={`Delete User Data`}
         content={`"Delete User Data" removes data stored on our database for your account. This data allows Spotify Heatmap to view your play history since registration with this site (and render those green squares below). You can remove app access by going to https://www.spotify.com/us/account/apps/ or deny access from the spotify app authorization page.`}
       />
+      <div className="w-screen h-screen bg-white">
+        <Header deleteUserHandler={user.current?.deleteUser.bind(user.current)} showModal={() => setShow(true)} />
 
-      <Header deleteUserHandler={user.current?.deleteUser.bind(user.current)} showModal={() => setShow(true)} />
+        <div id="dashboard" className="w-full flex">
+          <div id="dashboardLeft" className="w-1/5">
+            <img
+              alt="user-spotify-profile"
+              className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
+              src={profile?.images && profile.images[0]?.url}
+            ></img>
+            <div className="w-full">
+              <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
+            </div>
 
-      <div id="dashboard" className="w-full flex">
-        <div id="dashboardLeft" className="w-1/5">
-          <img
-            alt="user-spotify-profile"
-            className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
-            src={profile?.images && profile.images[0]?.url}
-          ></img>
-          <div className="w-full">
-            <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
+            <div className="w-full">
+              <CurrentlyPlaying data={currentSong} />
+            </div>
           </div>
-
-          <div className="w-full">
-            <CurrentlyPlaying data={currentSong} />
+          <div id="dashboardRight" className="w-4/5">
+            <div id="heatmap" className="w-fit mx-auto my-10">
+              <YearHeatmap data={history || {}} />
+              <p className="text-xs text-gray-400">
+                *heatmap only displays data logged since registration with spotify heatmap.
+              </p>
+            </div>
+            <TrackList
+              history={history}
+              fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
+              fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
+            />
           </div>
-        </div>
-        <div id="dashboardRight" className="w-4/5">
-          <div id="heatmap" className="w-fit mx-auto my-10">
-            <YearHeatmap data={history || {}} />
-            <p className="text-xs text-gray-400">
-              *heatmap only displays data logged since registration with spotify heatmap.
-            </p>
-          </div>
-          <TrackList
-            history={history}
-            fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
-            fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
-          />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
