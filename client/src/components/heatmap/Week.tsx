@@ -12,7 +12,7 @@ const WeekHeatmap = (props: WeekHeatmapProps) => {
   return (
     <div className="w-fit h-fit">
       {data.map((day) => {
-        return <DayHeatmap data={day} stats={stats} />;
+        return <DayHeatmap key={day.date} data={day} stats={stats} />;
       })}
     </div>
   );
