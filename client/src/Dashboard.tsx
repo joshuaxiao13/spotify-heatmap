@@ -72,7 +72,7 @@ const Dashboard = () => {
             >
               https://www.spotify.com/us/account/apps/
             </a>{' '}
-            or deny access from the spotify app authorization page.`
+            or deny access from the spotify app authorization redirection when you login.
           </>
         }
         buttonText={'Confirm'}
