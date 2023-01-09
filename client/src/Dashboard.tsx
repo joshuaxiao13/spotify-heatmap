@@ -56,7 +56,7 @@ const Dashboard = () => {
   return (
     <>
       <Modal
-        show={true}
+        show={show}
         onClose={() => setShow(false)}
         title={`Delete User Data`}
         content={`"Delete User Data" removes data stored on our database for your account. This data allows Spotify Heatmap to view your play history since registration with this site (and render those green squares below). You can remove app access by going to https://www.spotify.com/us/account/apps/ or deny access from the spotify app authorization page.`}
