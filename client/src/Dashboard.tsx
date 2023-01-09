@@ -7,6 +7,7 @@ import SpotifyUser from 'spotify-api/spotifyUser';
 import TrackList from './components/TrackList';
 import YearHeatmap from './components/heatmap/Year';
 import Header from './components/Header';
+import Modal from './components/Modal';
 
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
@@ -15,6 +16,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
+  const [show, setShow] = useState(false); //modal
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -53,7 +55,14 @@ const Dashboard = () => {
 
   return (
     <div className="w-screen h-screen bg-white">
-      <Header user={user} />
+      <Modal
+        show={show}
+        onClose={() => setShow(false)}
+        title={`Delete User Data`}
+        content={`"Delete User Data" removes data stored on our database for your account. This data allows Spotify Heatmap to view your play history since registration with this site (and render those green squares below). You can remove app access by going to https://www.spotify.com/us/account/apps/ or deny access from the spotify app authorization page.`}
+      />
+
+      <Header deleteUserHandler={user.current?.deleteUser.bind(user.current)} showModal={() => setShow(true)} />
 
       <div id="dashboard" className="w-full flex">
         <div id="dashboardLeft" className="w-1/5">
