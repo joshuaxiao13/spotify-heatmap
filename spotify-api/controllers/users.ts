@@ -99,8 +99,8 @@ export const getUserHistory = async (req: Request<{}, any, {}, { id: string }>, 
       return;
     }
 
-    console.log('GET user with id', req.query.id, '...');
     const user = await Users.findOne({ id: req.query.id });
+
     if (user) {
       res.status(200).json({ history: user.history });
     } else {

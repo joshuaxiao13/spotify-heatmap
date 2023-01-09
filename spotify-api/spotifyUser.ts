@@ -65,8 +65,6 @@ export default class SpotifyUser {
           try {
             const new_token = await refreshAccessToken(this.refresh_token);
             this.access_token = new_token;
-            console.log('update access token');
-            console.log('new token:', this.access_token);
             return this.run(generatePromise);
           } catch (e: any) {
             const msg = e.response.data.error?.message || e.response.data.error;
