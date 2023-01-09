@@ -9,7 +9,7 @@ const getPreviousDay = (date: Date) => {
 
 /**
  * Generates example user listening data for the landing page heatmap example
- * @returns
+ * @returns the example data
  */
 const genExampleData = (): Record<string, DayLookup> => {
   let currentDate = new Date();
