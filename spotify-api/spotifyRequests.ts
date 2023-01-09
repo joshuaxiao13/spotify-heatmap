@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { CLIENT_ID, CLIENT_SECRET } from './constants';
-import { queryParamsStringify } from './utils';
+import { flatten, queryParamsStringify } from './utils';
 
 export interface UserProfileResponse {
   display_name: string | undefined;
@@ -152,10 +152,10 @@ export const fetchCurrentlyPlayed = async (accessToken: string): Promise<Current
     });
 };
 
-export const fetchTrackImagesBySpotifyId = async (
+export const fetchTracksBySpotifyId = async (
   accessToken: string,
   spotify_ids: string[]
-): Promise<SpotifyApi.ImageObject[][]> => {
+): Promise<SpotifyApi.MultipleTracksResponse> => {
   // maximum 50 ids per request
   return axios
     .get<SpotifyApi.MultipleTracksResponse>(
@@ -169,8 +169,41 @@ export const fetchTrackImagesBySpotifyId = async (
       }
     )
     .then((response) => {
-      const tracks = response.data.tracks;
-      return tracks.map((item) => item.album.images);
+      return response.data;
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
+export const fetchArtistImagesBySpotifyId = async (
+  accessToken: string,
+  spotify_artist_ids: string[][]
+): Promise<SpotifyApi.ImageObject[][][]> => {
+  // maximum 50 ids per request
+  const flattened: string[] = flatten<string>(spotify_artist_ids);
+  return axios
+    .get<SpotifyApi.MultipleArtistsResponse>(
+      queryParamsStringify('https://api.spotify.com/v1/artists', {
+        ids: flattened.join(','),
+      }),
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+    .then((response) => {
+      const artists = response.data.artists;
+      let trackCounter = -1;
+      return artists.reduce<SpotifyApi.ImageObject[][][]>((acc, artistObject) => {
+        if (trackCounter === -1 || acc[trackCounter]!.length + 1 > spotify_artist_ids[trackCounter]!.length) {
+          ++trackCounter;
+          acc.push([]);
+        }
+        acc[trackCounter]!.push(artistObject.images);
+        return acc;
+      }, []);
     })
     .catch((err) => {
       throw err;

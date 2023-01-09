@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react';
 import { DayLookup, TrackData } from 'spotify-api/models/user';
+import { ArtistPlaceHolder } from '../icons/ArtistPlaceHolder';
 
 type fetchTrackImagesFun = (spotifyIdList: string[]) => Promise<SpotifyApi.ImageObject[][]>;
 
+type mostListensThisWeekResponse = [
+  {
+    uri: string;
+    images: {
+      album: SpotifyApi.ImageObject[];
+      artists: SpotifyApi.ImageObject[][];
+    };
+  },
+  TrackData
+][];
+
 async function mostListensThisWeek(
   history: Record<string, DayLookup>,
-  fetchTrackImagesById: fetchTrackImagesFun
-): Promise<[{ uri: string; images: SpotifyApi.ImageObject[] }, TrackData][]> {
+  fetchTrackImagesById: fetchTrackImagesFun,
+  fetchArtistImagesById: any
+): Promise<mostListensThisWeekResponse> {
   const currentDate = new Date();
   const trackToListens = new Map<string, number>();
   const trackToInfo = new Map<string, TrackData>();
@@ -32,23 +45,36 @@ async function mostListensThisWeek(
       return [...acc, [trackUri, { ...data, listens: listens }]];
     }, [])
     .slice(0, 10);
-  const imageObjects: SpotifyApi.ImageObject[][] = await fetchTrackImagesById(
-    topTracks.map(([_, data]) => data.spotify_id)
-  );
-  return topTracks.map(([uri, data], idx) => [{ uri: uri, images: imageObjects[idx] }, data]);
+
+  console.log('top tracks:', topTracks);
+  const [albumImageObjects, artistImageObjects] = await Promise.all([
+    fetchTrackImagesById(topTracks.map(([_, data]) => data.spotify_id)),
+    fetchArtistImagesById(topTracks.map(([_, data]) => data.spotify_id)),
+  ]);
+  return topTracks.map(([uri, data], idx) => [
+    {
+      uri: uri,
+      images: {
+        album: albumImageObjects[idx],
+        artists: artistImageObjects[idx],
+      },
+    },
+    data,
+  ]);
 }
 
 interface TrackListProps {
   history: Record<string, DayLookup> | undefined;
   fetchTrackImagesById: fetchTrackImagesFun | undefined;
+  fetchArtistImagesById: any;
 }
 
-const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
-  const [trackList, setTrackList] = useState<[{ uri: string; images: SpotifyApi.ImageObject[] }, TrackData][]>();
+const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: TrackListProps) => {
+  const [trackList, setTrackList] = useState<mostListensThisWeekResponse>();
 
   useEffect(() => {
     if (history && fetchTrackImagesById) {
-      mostListensThisWeek(history, fetchTrackImagesById)
+      mostListensThisWeek(history, fetchTrackImagesById, fetchArtistImagesById)
         .then((res) => setTrackList(res))
         .catch((e) => {
           console.log(e);
@@ -69,7 +95,7 @@ const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
             <tr className="border-b text-left text-sm font-medium text-gray-500">
               <th className="px-5 py-2">#</th>
               <th className="px-5 py-2">Track Title</th>
-              <th className="px-5 py-2">Artist</th>
+              <th className="px-5 py-2">Artists</th>
               <th className="px-5 py-2">Listens</th>
             </tr>
           </thead>
@@ -79,17 +105,33 @@ const TrackList = ({ history, fetchTrackImagesById }: TrackListProps) => {
                 return (
                   <tr className="border-b border-[1px]">
                     <td className="px-5 py-2">{idx + 1}</td>
-                    <td className="px-5 py-2 flex">
-                      <img
-                        src={images[0].url}
-                        alt="album-cover"
-                        className="h-10 w-10 shadow-sm rounded-sm my-auto"
-                      ></img>
-                      <a className="my-auto ml-2" href={uri}>
-                        {trackData.name}
+                    <td className="px-5 py-2">
+                      <a className="my-auto ml-2 flex gap-x-2" href={uri}>
+                        <img
+                          src={images.album[0].url}
+                          alt="album-cover"
+                          className="h-10 w-10 shadow-sm rounded-md my-auto"
+                        ></img>
+                        <span className="my-auto">{trackData.name}</span>
                       </a>
                     </td>
-                    <td className="px-5 py-2">{trackData.artists.join(', ')}</td>
+                    <td className="px-5 py-2">
+                      <div className="flex -space-x-4">
+                        {images.artists.map((artistImageObj, idx) => {
+                          if (!artistImageObj[0]) {
+                            return <ArtistPlaceHolder />;
+                          } else {
+                            return (
+                              <img
+                                src={artistImageObj[0].url}
+                                alt={`artist ${trackData.artists[idx]}`}
+                                className="h-10 w-10 rounded-full object-cover border-2 border-white dark:border-gray-800"
+                              ></img>
+                            );
+                          }
+                        })}
+                      </div>
+                    </td>
                     <td className="px-5 py-2">{trackData.listens}</td>
                   </tr>
                 );
