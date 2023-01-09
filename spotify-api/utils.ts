@@ -13,3 +13,7 @@ export const generateRandomString = (): string => {
   }
   return res;
 };
+
+export const flatten = <T>(twoDimArray: T[][]): T[] => {
+  return twoDimArray.reduce<T[]>((acc: T[], arr: T[]) => acc.concat(arr), []);
+};

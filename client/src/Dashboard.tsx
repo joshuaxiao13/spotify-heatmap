@@ -55,7 +55,7 @@ const Dashboard = () => {
       <header id="header" className="w-full h-20 bg-slate-800 flex" style={{ color: 'white' }}>
         <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
           <img
-            id="profile-image"
+            alt="spotify-logo"
             className="w-8 h-8"
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png"
           />
@@ -68,6 +68,7 @@ const Dashboard = () => {
       <div id="dashboard" className="w-full flex">
         <div id="dashboardLeft" className="w-1/5">
           <img
+            alt="user-spotify-profile"
             className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
             src={profile?.images && profile.images[0]?.url}
           ></img>
@@ -88,9 +89,8 @@ const Dashboard = () => {
           </div>
           <TrackList
             history={history}
-            fetchTrackImagesById={
-              user.current ? (spotifyIds) => user.current!.getTrackImagesById(spotifyIds) : undefined
-            }
+            fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
+            fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
           />
         </div>
       </div>
