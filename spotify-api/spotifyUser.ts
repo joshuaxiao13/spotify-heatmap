@@ -3,9 +3,10 @@ import { API_KEY } from './constants';
 import { DayLookup } from './models/user';
 import {
   CurrentlyPlayingResponse,
+  fetchArtistImagesBySpotifyId,
   fetchCurrentlyPlayed,
   fetchRecentlyPlayed,
-  fetchTrackImagesBySpotifyId,
+  fetchTracksBySpotifyId,
   fetchUserProfile,
   refreshAccessToken,
   Track,
@@ -112,12 +113,31 @@ export default class SpotifyUser {
   }
 
   /**
-   * Get album covers by spotify ids
+   * Get album covers by spotify track ids
    * @param spotifyIdList A list of a maximum of 50 spotify tracks ids
-   * @returns list of images objects with the album cover-art
+   * @returns list of image objects of album cover-art
    */
   public async getTrackImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][]> {
-    return this.run((token: string) => fetchTrackImagesBySpotifyId(token, spotifyIdList));
+    return this.run((accessToken: string) =>
+      fetchTracksBySpotifyId(accessToken, spotifyIdList).then((res) => res.tracks.map((item) => item.album.images))
+    );
+  }
+
+  /**
+   * Get artist images by spotify track ids (NOT spotify id for artist)
+   * @param spotifyIdList A list of a maximum of 50 spotify tracks ids
+   * @returns two-dimensional list of image objects of artists
+   */
+  public async getArtistImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][][]> {
+    return this.run((accessToken: string) =>
+      fetchTracksBySpotifyId(accessToken, spotifyIdList)
+        .then((res): string[][] => {
+          return res.tracks.reduce<string[][]>((acc, item) => [...acc, item.artists.map((artist) => artist.id)], []);
+        })
+        .then((spotifyArtistIdList: string[][]) => {
+          return fetchArtistImagesBySpotifyId(accessToken, spotifyArtistIdList);
+        })
+    );
   }
 
   /**

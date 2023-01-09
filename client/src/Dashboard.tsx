@@ -67,6 +67,7 @@ const Dashboard = () => {
       <div id="dashboard" className="w-full flex">
         <div id="dashboardLeft" className="w-1/5">
           <img
+            alt="user-spotify-profile"
             className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
             src={profile?.images && profile.images[0]?.url}
           ></img>
@@ -85,7 +86,11 @@ const Dashboard = () => {
               *heatmap only displays data logged since registration with spotify heatmap.
             </p>
           </div>
-          <TrackList history={history} fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)} />
+          <TrackList
+            history={history}
+            fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
+            fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
+          />
         </div>
       </div>
     </div>
