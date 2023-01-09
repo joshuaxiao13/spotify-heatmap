@@ -15,8 +15,9 @@ const Dashboard = () => {
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
+  const [historyForTable, setHistoryForTable] = useState<Record<string, DayLookup>>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
-  const [show, setShow] = useState(false); //modal
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -32,6 +33,7 @@ const Dashboard = () => {
         .getListeningHistory()
         .then((res) => {
           setHistory(res);
+          setHistoryForTable(res);
         })
         .catch((err) => {
           console.log(err);
@@ -48,6 +50,10 @@ const Dashboard = () => {
           });
       };
 
+      document.addEventListener('click', (event: MouseEvent) => {
+        console.log(event.target);
+      });
+
       updateCurrentSong();
       setInterval(updateCurrentSong, 60000);
     }
@@ -58,7 +64,7 @@ const Dashboard = () => {
       <Modal
         show={show}
         onClose={() => setShow(false)}
-        title={`Delete User Data`}
+        title={'Delete User Data'}
         content={
           <>
             Will remove data stored on our database for your account. This data allows Spotify Heatmap to view your play
@@ -103,13 +109,13 @@ const Dashboard = () => {
           </div>
           <div id="dashboardRight" className="w-4/5">
             <div id="heatmap" className="w-fit mx-auto my-10">
-              <YearHeatmap data={history || {}} />
+              <YearHeatmap data={history || {}} dayOnClick={(newHistory) => setHistoryForTable(newHistory)} />
               <p className="text-xs text-gray-400">
                 *heatmap only displays data logged since registration with spotify heatmap.
               </p>
             </div>
             <TrackList
-              history={history}
+              history={historyForTable}
               fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
               fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
             />

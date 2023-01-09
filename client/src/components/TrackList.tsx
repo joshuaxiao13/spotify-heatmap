@@ -4,6 +4,7 @@ import { ArtistPlaceHolder } from '../icons/ArtistPlaceHolder';
 import HoverPopup from './HoverPopup';
 
 type fetchTrackImagesFun = (spotifyIdList: string[]) => Promise<SpotifyApi.ImageObject[][]>;
+type fetchArtistImagesFun = (spotifyIdList: string[]) => Promise<SpotifyApi.ImageObject[][][]>;
 
 type mostListensThisWeekResponse = [
   {
@@ -19,7 +20,7 @@ type mostListensThisWeekResponse = [
 async function mostListensThisWeek(
   history: Record<string, DayLookup>,
   fetchTrackImagesById: fetchTrackImagesFun,
-  fetchArtistImagesById: any
+  fetchArtistImagesById: fetchArtistImagesFun
 ): Promise<mostListensThisWeekResponse> {
   const currentDate = new Date();
   const trackToListens = new Map<string, number>();
@@ -66,7 +67,7 @@ async function mostListensThisWeek(
 interface TrackListProps {
   history: Record<string, DayLookup> | undefined;
   fetchTrackImagesById: fetchTrackImagesFun | undefined;
-  fetchArtistImagesById: any;
+  fetchArtistImagesById: fetchArtistImagesFun | undefined;
 }
 
 const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: TrackListProps) => {
@@ -74,14 +75,14 @@ const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: Tra
   const [artistHoverState, setArtistHoverState] = useState<{ [k: string]: Boolean }>();
 
   useEffect(() => {
-    if (history && fetchTrackImagesById) {
+    if (history && fetchTrackImagesById && fetchArtistImagesById) {
       mostListensThisWeek(history, fetchTrackImagesById, fetchArtistImagesById)
         .then((res) => setTrackList(res))
         .catch((e) => {
           console.log(e);
         });
     }
-  }, [history, fetchTrackImagesById]);
+  }, [history, fetchTrackImagesById, fetchArtistImagesById]);
 
   if (!(history && fetchTrackImagesById) || !trackList) return <></>;
 

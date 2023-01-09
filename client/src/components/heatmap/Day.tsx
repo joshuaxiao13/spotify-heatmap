@@ -15,12 +15,11 @@ interface DayHeatmapProps {
     mean: number;
     std: number;
   };
+  dayOnClick?: (history: Record<string, DayLookup>) => void;
 }
 
-const DayHeatmap = (props: DayHeatmapProps) => {
+const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
   const [isHover, setIsHover] = useState(false);
-
-  const { data, stats } = props;
   const { mean, std } = stats;
   const { date, numberOfSongsPlayed, minsPlayed } = data;
 
@@ -60,9 +59,12 @@ const DayHeatmap = (props: DayHeatmapProps) => {
 
   return (
     <div
-      className={`w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover ? 'border-black' : ''}`}
+      className={`day-cell w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover ? 'border-black' : ''}`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
+      onClick={() => {
+        if (dayOnClick) dayOnClick({ [date]: data.songsPlayed });
+      }}
     >
       {isHover && (
         <HoverPopup
