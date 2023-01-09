@@ -9,9 +9,13 @@ const Header = (props: HeaderProps) => {
   return (
     <div id="header" className="sticky top-0 z-10 w-full h-20 bg-slate-700 flex">
       <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
-        <img id="profile-image" className="w-8 h-8" src={logo}></img>
+        <a href="./">
+          <img id="profile-image" className="w-8 h-8" src={logo}></img>
+        </a>
         <div id="name" className="mx-7 my-auto text-white">
-          Spotify Heatmap
+          <>
+            <a href="./">Spotify Heatmap</a>{' '}
+          </>
         </div>
       </div>
       {deleteUserHandler && (
