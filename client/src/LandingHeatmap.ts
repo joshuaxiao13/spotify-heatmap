@@ -21,7 +21,7 @@ const genExampleData = (): Record<string, DayLookup> => {
         name: 'exampleSongTitle',
         artists: [],
         listens: Math.random() > 0.9 ? 0 : Math.floor(Math.random() * 100),
-        duration_ms: 0,
+        duration_ms: 2000 * 60 + Math.floor(2 * Math.random() - 1 * 500),
         spotify_id: '',
       },
     };
