@@ -1,7 +1,7 @@
 import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
 import { DayLookup } from 'spotify-api/models/user';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import CurrentlyPlaying from './components/CurrentlyPlaying';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import TrackList from './components/TrackList';
@@ -25,46 +25,6 @@ const Dashboard = () => {
     const refresh_token = queryParams.get('refresh_token');
     if (access_token && refresh_token) {
       user.current = new SpotifyUser(access_token, refresh_token);
-
-      user.current.profile.then((res) => {
-        setProfile(res);
-      });
-
-      filterHistoryPromise.current = user.current.getListeningHistory().then((res) => {
-        setHistory(res);
-        const filterThisWeekOnly: Record<string, DayLookup> = {};
-        const date = new Date();
-        do {
-          const lookup: DayLookup = res[date.toDateString()];
-          if (lookup) {
-            filterThisWeekOnly[date.toDateString()] = lookup;
-          }
-          date.setDate(date.getDate() - 1);
-        } while (date.getDay() !== 6);
-        return filterThisWeekOnly;
-      });
-
-      filterHistoryPromise.current
-        .then((res) => {
-          setHistoryForTable({ history: res, day: 'This Week' });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      const updateCurrentSong = async (): Promise<void> => {
-        user
-          .current!.getCurrentlyPlayed()
-          .then((res) => {
-            setCurrentSong(res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      };
-
-      const target = document.getElementById('dashboard');
-
       const handleClick = (event: MouseEvent) => {
         const el: HTMLElement = event.target as HTMLElement;
         if (el && !el.classList?.contains('day-cell')) {
@@ -76,16 +36,60 @@ const Dashboard = () => {
         }
       };
 
-      target?.addEventListener('click', handleClick);
+      const target = document.getElementById('dashboard');
 
-      updateCurrentSong();
-      setInterval(updateCurrentSong, 60000);
+      setTimeout(() => {
+        if (!user.current) return;
+        user.current?.profile.then((res) => {
+          setProfile(res);
+        });
+
+        filterHistoryPromise.current = user.current.getListeningHistory().then((res) => {
+          setHistory(res);
+          const filterThisWeekOnly: Record<string, DayLookup> = {};
+          const date = new Date();
+          do {
+            const lookup: DayLookup = res[date.toDateString()];
+            if (lookup) {
+              filterThisWeekOnly[date.toDateString()] = lookup;
+            }
+            date.setDate(date.getDate() - 1);
+          } while (date.getDay() !== 6);
+          return filterThisWeekOnly;
+        });
+
+        filterHistoryPromise.current
+          .then((res) => {
+            setHistoryForTable({ history: res, day: 'This Week' });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+        const updateCurrentSong = async (): Promise<void> => {
+          user
+            .current!.getCurrentlyPlayed()
+            .then((res) => {
+              setCurrentSong(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        };
+
+        target?.addEventListener('click', handleClick);
+
+        updateCurrentSong();
+        setInterval(updateCurrentSong, 60000);
+      }, 500);
 
       return () => {
         target?.removeEventListener('click', handleClick);
       };
     }
   }, []);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -112,8 +116,8 @@ const Dashboard = () => {
         buttonText={'Confirm'}
         onClickHandler={() => {
           if (user.current) {
-            user.current?.deleteUser.bind(user.current);
-            window.location.reload();
+            user.current.deleteUser();
+            navigate('/');
           }
         }}
       />
