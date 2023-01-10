@@ -12,6 +12,7 @@ import Modal from './components/Modal';
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
+  const historyPromise = useRef<Promise<Record<string, DayLookup>> | null>(null);
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
@@ -29,8 +30,8 @@ const Dashboard = () => {
         setProfile(res);
       });
 
-      user.current
-        .getListeningHistory()
+      historyPromise.current = user.current.getListeningHistory();
+      historyPromise.current
         .then((res) => {
           setHistory(res);
           setHistoryForTable(res);
@@ -50,12 +51,27 @@ const Dashboard = () => {
           });
       };
 
-      document.addEventListener('click', (event: MouseEvent) => {
-        console.log(event.target);
-      });
+      const target = document.getElementById('dashboard');
+
+      const handleClick = (event: MouseEvent) => {
+        const el: HTMLElement = event.target as HTMLElement;
+        if (el && !el.classList?.contains('day-cell')) {
+          if (historyPromise.current) {
+            historyPromise.current.then((res) => {
+              setHistoryForTable(res);
+            });
+          }
+        }
+      };
+
+      target?.addEventListener('click', handleClick);
 
       updateCurrentSong();
       setInterval(updateCurrentSong, 60000);
+
+      return () => {
+        target?.removeEventListener('click', handleClick);
+      };
     }
   }, []);
 
