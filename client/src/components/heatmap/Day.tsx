@@ -1,5 +1,5 @@
 import { DayLookup } from 'spotify-api/models/user';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import HoverPopup from '../HoverPopup';
 
 export interface Day {
@@ -20,6 +20,27 @@ interface DayHeatmapProps {
 }
 
 const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target: HTMLElement = event.target as HTMLElement;
+      const cells = document.querySelectorAll('.day-cell');
+      cells.forEach((cell) => {
+        const cellDiv = cell as HTMLDivElement;
+        if (target === cellDiv) {
+          cellDiv.style.borderColor = 'blue';
+        } else {
+          cellDiv.style.borderColor = '';
+        }
+      });
+    };
+
+    document.getElementById('dashboard')?.addEventListener('click', handleClick);
+
+    return () => {
+      document.getElementById('dashboard')?.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   const [isHover, setIsHover] = useState(false);
   const { mean, std } = stats;
   const { date, numberOfSongsPlayed, minsPlayed } = data;
@@ -60,7 +81,7 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
 
   return (
     <div
-      className={`day-cell w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover ? 'border-black' : ''}`}
+      className={`day-cell w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} hover:border-black`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       onClick={() => {

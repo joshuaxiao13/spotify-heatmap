@@ -116,6 +116,7 @@ export default class SpotifyUser {
    * @returns list of image objects of album cover-art
    */
   public async getTrackImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][]> {
+    if (spotifyIdList.length === 0) return [];
     return this.run((accessToken: string) =>
       fetchTracksBySpotifyId(accessToken, spotifyIdList).then((res) => res.tracks.map((item) => item.album.images))
     );
@@ -127,6 +128,7 @@ export default class SpotifyUser {
    * @returns two-dimensional list of image objects of artists
    */
   public async getArtistImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][][]> {
+    if (spotifyIdList.length === 0) return [];
     return this.run((accessToken: string) =>
       fetchTracksBySpotifyId(accessToken, spotifyIdList)
         .then((res): string[][] => {
