@@ -1,5 +1,5 @@
 import { DayLookup } from 'spotify-api/models/user';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import HoverPopup from '../HoverPopup';
 
 export interface Day {
@@ -20,27 +20,6 @@ interface DayHeatmapProps {
 }
 
 const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      const target: HTMLElement = event.target as HTMLElement;
-      const cells = document.querySelectorAll('.day-cell');
-      cells.forEach((cell) => {
-        const cellDiv = cell as HTMLDivElement;
-        if (target === cellDiv) {
-          cellDiv.style.borderColor = 'blue';
-        } else {
-          cellDiv.style.borderColor = '';
-        }
-      });
-    };
-
-    document.getElementById('dashboard')?.addEventListener('click', handleClick);
-
-    return () => {
-      document.getElementById('dashboard')?.removeEventListener('click', handleClick);
-    };
-  }, []);
-
   const [isHover, setIsHover] = useState(false);
   const { mean, std } = stats;
   const { date, numberOfSongsPlayed, minsPlayed } = data;
@@ -50,7 +29,7 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
   // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
   let cellColor: string;
   if (numberOfSongsPlayed === 0) {
-    cellColor = 'bg-gray-100 border-gray-300';
+    cellColor = 'bg-gray-100 border-gray-300 dark:bg-gray-700';
   } else if (zScore <= -3) {
     cellColor = 'bg-green-50 border-green-200';
   } else if (zScore <= -2) {

@@ -91,21 +91,21 @@ const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackL
       <h2 id="recentActivity" className="text-center">
         Activity {data.day}
       </h2>
-      <div className="w-2/3 pt-5 my-2 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
+      <div className="w-2/3 pt-5 my-2 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-700 mx-auto relative overflow-x-auto">
         <table className="border-collapse table-auto w-full">
           <thead>
-            <tr className="border-b text-left text-sm font-medium text-gray-500">
+            <tr className="border-b text-left text-sm font-medium text-gray-500 dark:text-gray-300 dark:border-gray-700">
               <th className="px-5 py-2">#</th>
               <th className="px-5 py-2">Track Title</th>
               <th className="px-5 py-2">Artists</th>
               <th className="px-5 py-2">Listens</th>
             </tr>
           </thead>
-          <tbody className="bg-white text-gray-600 shadow-md text-sm">
+          <tbody className="bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-200 shadow-md text-sm">
             {trackList &&
               trackList.map(([{ uri, images }, trackData], idx1) => {
                 return (
-                  <tr className="border-b border-[1px]">
+                  <tr className="border-b border-[1px] dark:border-gray-700 ">
                     <td className="px-5 py-2">{idx1 + 1}</td>
                     <td className="px-5 py-2">
                       <a className="my-auto ml-2 flex gap-x-2" href={uri}>
@@ -117,8 +117,8 @@ const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackL
                         <span className="my-auto">{trackData.name}</span>
                       </a>
                     </td>
-                    <td className="px-5 py-2">
-                      <div className="flex -space-x-4">
+                    <td className="px-5 py-2 ">
+                      <div className="flex -space-x-4 dark:border-gray-700">
                         {images.artists.map((artistImageObj, idx2) => {
                           const artistName = trackData.artists[idx2];
                           const id = `artist-${idx1}-${idx2}`;

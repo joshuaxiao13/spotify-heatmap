@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [history, setHistory] = useState<Record<string, DayLookup>>();
   const [historyForTable, setHistoryForTable] = useState<{ history: Record<string, DayLookup>; day: string }>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
-  const [isModalShow, setIsModalShow] = useState(false); //modal
+  const [isModalShow, setIsModalShow] = useState(false);
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -75,8 +75,29 @@ const Dashboard = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target: HTMLElement = event.target as HTMLElement;
+      const cells = document.querySelectorAll('.day-cell');
+      cells.forEach((cell) => {
+        const cellDiv = cell as HTMLDivElement;
+        if (target === cellDiv) {
+          cellDiv.style.borderColor = 'rgb(0,191,255)';
+        } else {
+          cellDiv.style.borderColor = '';
+        }
+      });
+    };
+
+    document.getElementById('dashboard')?.addEventListener('click', handleClick);
+
+    return () => {
+      document.getElementById('dashboard')?.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   return (
-    <>
+    <main className={window.localStorage.getItem('dark mode') === 'true' ? 'dark' : ''}>
       <Modal
         show={isModalShow}
         onClose={() => setIsModalShow(false)}
@@ -105,7 +126,7 @@ const Dashboard = () => {
           }
         }}
       />
-      <div className="w-screen h-screen bg-white">
+      <div className="w-screen h-screen bg-white dark:bg-black">
         <Header
           deleteUserHandler={user.current?.deleteUser.bind(user.current)}
           showModal={() => setIsModalShow(true)}
@@ -118,7 +139,7 @@ const Dashboard = () => {
               src={profile?.images && profile.images[0]?.url}
             ></img>
             <div className="w-full">
-              <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
+              <div className="mx-auto w-fit text-center text-lg dark:text-white">{profile?.display_name}</div>
             </div>
 
             <div className="w-full">
@@ -145,7 +166,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 };
 

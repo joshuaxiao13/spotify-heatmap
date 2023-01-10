@@ -105,7 +105,7 @@ const YearHeatmap = ({ data, dayOnClick }: YearHeatmapProps) => {
   const stats = getStatistics(data);
 
   return (
-    <div className=" bg-white flex w-fit h-fit p-3 rounded-sm border-[1px]">
+    <div className="bg-white dark:bg-gray-900 dark:border-gray-700 flex w-fit h-fit p-3 rounded-sm border-[1px]">
       {year.map((week) => (
         <WeekHeatmap key={week[0]?.date} data={week} stats={stats} dayOnClick={dayOnClick} />
       ))}
