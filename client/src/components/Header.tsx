@@ -19,7 +19,7 @@ const Header = (props: HeaderProps) => {
           </>
         </div>
       </div>
-      <div className="flex gap-x-5">
+      <div className="flex gap-x-5 my-auto mr-10">
         <button
           onClick={() => {
             const topMostDiv = document.getElementsByTagName('main')[0];
@@ -35,13 +35,12 @@ const Header = (props: HeaderProps) => {
           <Moon />
         </button>
         {deleteUserHandler && (
-          <>
-            <div className="w-fit h-fit ml-auto my-auto mr-10 p-1 rounded-lg bg-red-400 border-[1px] border-red-500 text-dark">
-              <button className="text-sm" onClick={showModal}>
-                Delete User Data
-              </button>
-            </div>
-          </>
+          <button
+            className="text-sm w-fit h-fit ml-auto rounded-lg bg-red-400 border-[1px] border-red-500 text-dark p-2"
+            onClick={showModal}
+          >
+            Delete User Data
+          </button>
         )}
       </div>
     </div>

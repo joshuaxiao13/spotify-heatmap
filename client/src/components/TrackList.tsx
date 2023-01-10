@@ -88,7 +88,7 @@ const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackL
 
   return (
     <>
-      <h2 id="recentActivity" className="text-center">
+      <h2 id="recentActivity" className="text-center dark:text-gray-300">
         Activity {data.day}
       </h2>
       <div className="w-2/3 pt-5 my-2 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-700 mx-auto relative overflow-x-auto">

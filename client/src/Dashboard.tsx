@@ -97,7 +97,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <main className={window.localStorage.getItem('dark mode') === 'true' ? 'dark' : ''}>
+    <>
       <Modal
         show={isModalShow}
         onClose={() => setIsModalShow(false)}
@@ -126,7 +126,7 @@ const Dashboard = () => {
           }
         }}
       />
-      <div className="w-screen h-screen bg-white dark:bg-black">
+      <div className="w-screen h-screen min-h-fit bg-white dark:bg-black">
         <Header
           deleteUserHandler={user.current?.deleteUser.bind(user.current)}
           showModal={() => setIsModalShow(true)}
@@ -166,7 +166,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </main>
+    </>
   );
 };
 
