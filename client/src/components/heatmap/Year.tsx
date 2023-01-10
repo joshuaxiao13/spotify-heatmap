@@ -99,9 +99,10 @@ const getStatistics = (data: Record<string, DayLookup>): { mean: number; std: nu
 interface YearHeatmapProps {
   data: Record<string, DayLookup>;
   dayOnClick?: (history: { history: Record<string, DayLookup>; day: string }) => void;
+  handleNonCellClick?: (el: HTMLElement) => void;
 }
 
-const YearHeatmap = ({ data, dayOnClick }: YearHeatmapProps) => {
+const YearHeatmap = ({ data, dayOnClick, handleNonCellClick }: YearHeatmapProps) => {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target: HTMLElement = event.target as HTMLElement;
@@ -116,6 +117,10 @@ const YearHeatmap = ({ data, dayOnClick }: YearHeatmapProps) => {
           cellDiv.classList.remove('animate-pulse');
         }
       });
+
+      if (!target.classList.contains('day-cell') && handleNonCellClick) {
+        handleNonCellClick(target);
+      }
     };
 
     document.getElementById('heatmap')?.addEventListener('click', handleClick);

@@ -20,23 +20,21 @@ const Dashboard = () => {
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
   const [isModalShow, setIsModalShow] = useState(false);
 
+  const handleNonCellClick = (el: HTMLElement) => {
+    if (el && !el.classList?.contains('day-cell')) {
+      if (filterHistoryPromise.current) {
+        filterHistoryPromise.current.then((res) => {
+          setHistoryForTable({ history: res, day: 'This Week' });
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     const access_token = queryParams.get('access_token');
     const refresh_token = queryParams.get('refresh_token');
     if (access_token && refresh_token) {
       user.current = new SpotifyUser(access_token, refresh_token);
-      const handleClick = (event: MouseEvent) => {
-        const el: HTMLElement = event.target as HTMLElement;
-        if (el && !el.classList?.contains('day-cell')) {
-          if (filterHistoryPromise.current) {
-            filterHistoryPromise.current.then((res) => {
-              setHistoryForTable({ history: res, day: 'This Week' });
-            });
-          }
-        }
-      };
-
-      const target = document.getElementById('dashboard');
 
       setTimeout(() => {
         if (!user.current) return;
@@ -77,15 +75,9 @@ const Dashboard = () => {
             });
         };
 
-        target?.addEventListener('click', handleClick);
-
         updateCurrentSong();
         setInterval(updateCurrentSong, 60000);
       }, 500);
-
-      return () => {
-        target?.removeEventListener('click', handleClick);
-      };
     }
   }, []);
 
@@ -148,6 +140,7 @@ const Dashboard = () => {
                 dayOnClick={(newHistory: { history: Record<string, DayLookup>; day: string }) =>
                   setHistoryForTable(newHistory)
                 }
+                handleNonCellClick={handleNonCellClick}
               />
               <p className="text-xs text-gray-400">
                 *heatmap only displays data logged since registration with spotify heatmap.
