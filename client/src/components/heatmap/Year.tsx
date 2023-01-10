@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import WeekHeatmap, { Week } from './Week';
 import { DayLookup } from 'spotify-api/models/user';
 
@@ -97,18 +98,48 @@ const getStatistics = (data: Record<string, DayLookup>): { mean: number; std: nu
 
 interface YearHeatmapProps {
   data: Record<string, DayLookup>;
+  dayOnClick?: (history: { history: Record<string, DayLookup>; day: string }) => void;
+  handleNonCellClick?: (el: HTMLElement) => void;
 }
 
-const YearHeatmap = (props: YearHeatmapProps) => {
-  const { data } = props;
+const YearHeatmap = ({ data, dayOnClick, handleNonCellClick }: YearHeatmapProps) => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target: HTMLElement = event.target as HTMLElement;
+      const cells = document.querySelectorAll('.day-cell');
+      cells.forEach((cell) => {
+        const cellDiv = cell as HTMLDivElement;
+        if (target === cellDiv) {
+          cellDiv.style.borderColor = 'rgb(0,191,255)';
+          cellDiv.classList.add('animate-pulse');
+        } else {
+          cellDiv.style.borderColor = '';
+          cellDiv.classList.remove('animate-pulse');
+        }
+      });
+
+      if (!target.classList.contains('day-cell') && handleNonCellClick) {
+        handleNonCellClick(target);
+      }
+    };
+
+    document.getElementById('heatmap')?.addEventListener('click', handleClick);
+
+    return () => {
+      document.getElementById('heatmap')?.removeEventListener('click', handleClick);
+    };
+  }, []);
 
   const year = groupbyWeek(data);
   const stats = getStatistics(data);
 
   return (
-    <div className=" bg-white flex w-fit h-fit p-3 rounded-sm border-[1px]">
+    <div
+      id="heatmap"
+      className="bg-white dark:bg-gray-900 dark:border-gray-700 flex w-fit h-fit p-3 rounded-sm border-[1px] cursor-pointer"
+    >
       {year.map((week) => (
-        <WeekHeatmap key={week[0]?.date} data={week} stats={stats}></WeekHeatmap>
+        <WeekHeatmap key={week[0]?.date} data={week} stats={stats} dayOnClick={dayOnClick} />
       ))}
     </div>
   );

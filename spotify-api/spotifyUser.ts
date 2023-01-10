@@ -65,8 +65,6 @@ export default class SpotifyUser {
           try {
             const new_token = await refreshAccessToken(this.refresh_token);
             this.access_token = new_token;
-            console.log('update access token');
-            console.log('new token:', this.access_token);
             return this.run(generatePromise);
           } catch (e: any) {
             const msg = e.response.data.error?.message || e.response.data.error;
@@ -118,6 +116,7 @@ export default class SpotifyUser {
    * @returns list of image objects of album cover-art
    */
   public async getTrackImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][]> {
+    if (spotifyIdList.length === 0) return [];
     return this.run((accessToken: string) =>
       fetchTracksBySpotifyId(accessToken, spotifyIdList).then((res) => res.tracks.map((item) => item.album.images))
     );
@@ -129,6 +128,7 @@ export default class SpotifyUser {
    * @returns two-dimensional list of image objects of artists
    */
   public async getArtistImagesById(spotifyIdList: string[]): Promise<SpotifyApi.ImageObject[][][]> {
+    if (spotifyIdList.length === 0) return [];
     return this.run((accessToken: string) =>
       fetchTracksBySpotifyId(accessToken, spotifyIdList)
         .then((res): string[][] => {

@@ -15,12 +15,12 @@ interface DayHeatmapProps {
     mean: number;
     std: number;
   };
+
+  dayOnClick?: (data: { history: Record<string, DayLookup>; day: string }) => void;
 }
 
-const DayHeatmap = (props: DayHeatmapProps) => {
+const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
   const [isHover, setIsHover] = useState(false);
-
-  const { data, stats } = props;
   const { mean, std } = stats;
   const { date, numberOfSongsPlayed, minsPlayed } = data;
 
@@ -29,7 +29,7 @@ const DayHeatmap = (props: DayHeatmapProps) => {
   // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
   let cellColor: string;
   if (numberOfSongsPlayed === 0) {
-    cellColor = 'bg-gray-100 border-gray-300';
+    cellColor = 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500';
   } else if (zScore <= -3) {
     cellColor = 'bg-green-50 border-green-200';
   } else if (zScore <= -2) {
@@ -60,9 +60,14 @@ const DayHeatmap = (props: DayHeatmapProps) => {
 
   return (
     <div
-      className={`w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} ${isHover ? 'border-black' : ''}`}
+      className={`day-cell w-3.5 h-3.5 m-0.5 rounded-sm border-[1px] ${cellColor} hover:border-black`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
+      onClick={() => {
+        if (dayOnClick) {
+          dayOnClick({ history: { [date]: data.songsPlayed }, day: date });
+        }
+      }}
     >
       {isHover && (
         <HoverPopup

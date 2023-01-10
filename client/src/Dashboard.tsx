@@ -1,7 +1,7 @@
 import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
 import { DayLookup } from 'spotify-api/models/user';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import CurrentlyPlaying from './components/CurrentlyPlaying';
 import SpotifyUser from 'spotify-api/spotifyUser';
 import TrackList from './components/TrackList';
@@ -12,11 +12,23 @@ import Modal from './components/Modal';
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
+  const filterHistoryPromise = useRef<Promise<Record<string, DayLookup>> | null>(null);
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
+  const [historyForTable, setHistoryForTable] = useState<{ history: Record<string, DayLookup>; day: string }>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
-  const [isModalShow, setIsModalShow] = useState(false); //modal
+  const [isModalShow, setIsModalShow] = useState(false);
+
+  const handleNonCellClick = (el: HTMLElement) => {
+    if (el && !el.classList?.contains('day-cell')) {
+      if (filterHistoryPromise.current) {
+        filterHistoryPromise.current.then((res) => {
+          setHistoryForTable({ history: res, day: 'This Week' });
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const access_token = queryParams.get('access_token');
@@ -24,34 +36,52 @@ const Dashboard = () => {
     if (access_token && refresh_token) {
       user.current = new SpotifyUser(access_token, refresh_token);
 
-      user.current.profile.then((res) => {
-        setProfile(res);
-      });
-
-      user.current
-        .getListeningHistory()
-        .then((res) => {
-          setHistory(res);
-        })
-        .catch((err) => {
-          console.log(err);
+      setTimeout(() => {
+        if (!user.current) return;
+        user.current?.profile.then((res) => {
+          setProfile(res);
         });
 
-      const updateCurrentSong = async (): Promise<void> => {
-        user
-          .current!.getCurrentlyPlayed()
+        filterHistoryPromise.current = user.current.getListeningHistory().then((res) => {
+          setHistory(res);
+          const filterThisWeekOnly: Record<string, DayLookup> = {};
+          const date = new Date();
+          do {
+            const lookup: DayLookup = res[date.toDateString()];
+            if (lookup) {
+              filterThisWeekOnly[date.toDateString()] = lookup;
+            }
+            date.setDate(date.getDate() - 1);
+          } while (date.getDay() !== 6);
+          return filterThisWeekOnly;
+        });
+
+        filterHistoryPromise.current
           .then((res) => {
-            setCurrentSong(res);
+            setHistoryForTable({ history: res, day: 'This Week' });
           })
           .catch((err) => {
             console.log(err);
           });
-      };
 
-      updateCurrentSong();
-      setInterval(updateCurrentSong, 60000);
+        const updateCurrentSong = async (): Promise<void> => {
+          user
+            .current!.getCurrentlyPlayed()
+            .then((res) => {
+              setCurrentSong(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        };
+
+        updateCurrentSong();
+        setInterval(updateCurrentSong, 60000);
+      }, 500);
     }
   }, []);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -78,12 +108,12 @@ const Dashboard = () => {
         buttonText={'Confirm'}
         onClickHandler={() => {
           if (user.current) {
-            user.current?.deleteUser.bind(user.current);
-            window.location.reload();
+            user.current.deleteUser();
+            navigate('/');
           }
         }}
       />
-      <div className="w-screen h-screen bg-white">
+      <div className="w-screen h-screen min-h-fit bg-white dark:bg-black">
         <Header
           deleteUserHandler={user.current?.deleteUser.bind(user.current)}
           showModal={() => setIsModalShow(true)}
@@ -96,7 +126,7 @@ const Dashboard = () => {
               src={profile?.images && profile.images[0]?.url}
             ></img>
             <div className="w-full">
-              <div className="mx-auto w-fit text-center text-lg">{profile?.display_name}</div>
+              <div className="mx-auto w-fit text-center text-lg dark:text-white">{profile?.display_name}</div>
             </div>
 
             <div className="w-full">
@@ -104,14 +134,20 @@ const Dashboard = () => {
             </div>
           </div>
           <div id="dashboardRight" className="w-4/5">
-            <div id="heatmap" className="w-fit mx-auto my-10">
-              <YearHeatmap data={history || {}} />
+            <div className="w-fit mx-auto my-10">
+              <YearHeatmap
+                data={history || {}}
+                dayOnClick={(newHistory: { history: Record<string, DayLookup>; day: string }) =>
+                  setHistoryForTable(newHistory)
+                }
+                handleNonCellClick={handleNonCellClick}
+              />
               <p className="text-xs text-gray-400">
                 *heatmap only displays data logged since registration with spotify heatmap.
               </p>
             </div>
             <TrackList
-              history={history}
+              data={historyForTable}
               fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
               fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
             />

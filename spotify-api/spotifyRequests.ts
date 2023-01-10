@@ -33,7 +33,6 @@ export const refreshAccessToken = async (refresh_token: string): Promise<string>
 };
 
 export const fetchUserProfile = async (accessToken: string): Promise<UserProfileResponse> => {
-  console.log(accessToken);
   return axios
     .get<SpotifyApi.CurrentUsersProfileResponse>('https://api.spotify.com/v1/me/', {
       headers: {
@@ -130,10 +129,6 @@ export const fetchCurrentlyPlayed = async (accessToken: string): Promise<Current
         };
       } else if (response.data.currently_playing_type === 'track') {
         const item = response.data.item as SpotifyApi.TrackObjectFull;
-        console.log(item.name);
-        item.artists.forEach((artist) => console.log(artist.name));
-        console.log(item.album.images);
-        console.log(item.preview_url);
         return {
           msg: 'Playing track',
           name: item.name,
@@ -172,6 +167,7 @@ export const fetchTracksBySpotifyId = async (
       return response.data;
     })
     .catch((err) => {
+      console.log(err);
       throw err;
     });
 };
@@ -206,6 +202,7 @@ export const fetchArtistImagesBySpotifyId = async (
       }, []);
     })
     .catch((err) => {
+      console.log(err);
       throw err;
     });
 };
