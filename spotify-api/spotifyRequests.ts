@@ -167,6 +167,7 @@ export const fetchTracksBySpotifyId = async (
       return response.data;
     })
     .catch((err) => {
+      console.log(err);
       throw err;
     });
 };
@@ -201,6 +202,7 @@ export const fetchArtistImagesBySpotifyId = async (
       }, []);
     })
     .catch((err) => {
+      console.log(err);
       throw err;
     });
 };

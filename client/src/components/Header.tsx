@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import logo from '../assets/heatmap_logo.png';
 import { Moon } from '../icons/Moon';
 
@@ -6,9 +7,16 @@ interface HeaderProps {
   showModal?: () => void;
 }
 const Header = (props: HeaderProps) => {
+  useEffect(() => {
+    const darkMode: string | null = window.localStorage.getItem('dark mode');
+    if (darkMode === 'true') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.backgroundColor = 'black';
+    }
+  }, []);
   const { deleteUserHandler, showModal } = props;
   return (
-    <div id="header" className="sticky top-0 z-10 w-full h-20 bg-slate-700 dark:bg-slate-800 flex justify-between">
+    <div id="header" className="sticky  top-0 z-10 w-full h-20 bg-slate-700  flex justify-between">
       <div id="logoAndName" className="h-fit w-fit my-auto mx-7 flex">
         <a href="./">
           <img id="profile-image" className="w-8 h-8" src={logo}></img>
@@ -22,12 +30,13 @@ const Header = (props: HeaderProps) => {
       <div className="flex gap-x-5 my-auto mr-10">
         <button
           onClick={() => {
-            const topMostDiv = document.getElementsByTagName('main')[0];
-            if (topMostDiv.classList.contains('dark')) {
-              topMostDiv.classList.remove('dark');
+            if (document.documentElement.classList.contains('dark')) {
+              document.documentElement.classList.remove('dark');
+              document.documentElement.style.backgroundColor = '';
               window.localStorage.removeItem('dark mode');
             } else {
-              topMostDiv.classList.add('dark');
+              document.documentElement.classList.add('dark');
+              document.documentElement.style.backgroundColor = 'black';
               window.localStorage.setItem('dark mode', 'true');
             }
           }}

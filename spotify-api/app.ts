@@ -28,9 +28,8 @@ const start = async (): Promise<void> => {
     app.listen(PORT, () => {
       console.log(`listening on port ${PORT} ...`);
     });
-    // update every 15 minutes
     updateAllUsers();
-    setInterval(updateAllUsers, 15 * 60 * 1000);
+    setInterval(updateAllUsers, 50 * 60 * 1000);
   } catch (err) {
     console.log('failed to connect to DB');
   }

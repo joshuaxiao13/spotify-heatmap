@@ -22,28 +22,24 @@ async function mostListensThisWeek(
   fetchTrackImagesById: fetchTrackImagesFun,
   fetchArtistImagesById: fetchArtistImagesFun
 ): Promise<mostListensThisWeekResponse> {
-  const currentDate = new Date();
   const trackToListens = new Map<string, number>();
   const trackToInfo = new Map<string, TrackData>();
-  do {
-    const lookup: DayLookup = history[currentDate.toDateString()];
-    if (lookup) {
-      Object.entries(lookup).forEach(([trackUri, trackData]) => {
-        const accumulatedListens: number = trackToListens.get(trackUri) || 0;
-        if (accumulatedListens === 0) {
-          trackToInfo.set(trackUri, trackData);
-        }
-        trackToListens.set(trackUri, trackData.listens + accumulatedListens);
-      });
-    }
-    currentDate.setDate(currentDate.getDate() - 1);
-  } while (currentDate.getDay() !== 6);
+
+  Object.entries(history).forEach(([_, lookup]) => {
+    Object.entries(lookup).forEach(([trackUri, trackData]) => {
+      const accumulatedListens: number = trackToListens.get(trackUri) || 0;
+      if (accumulatedListens === 0) {
+        trackToInfo.set(trackUri, trackData);
+      }
+      trackToListens.set(trackUri, trackData.listens + accumulatedListens);
+    });
+  });
 
   const trackToListensList: [string, number][] = Array.from(trackToListens).sort((a, b) => b[1] - a[1]);
   const topTracks: [string, TrackData][] = trackToListensList
     .reduce<[string, TrackData][]>((acc, [trackUri, listens]) => {
       const data = trackToInfo.get(trackUri)!;
-      if (!data.spotify_id) return acc;
+      if (data.spotify_id === undefined) return acc;
       return [...acc, [trackUri, { ...data, listens: listens }]];
     }, [])
     .slice(0, 10);
@@ -52,6 +48,7 @@ async function mostListensThisWeek(
     fetchTrackImagesById(topTracks.map(([_, data]) => data.spotify_id)),
     fetchArtistImagesById(topTracks.map(([_, data]) => data.spotify_id)),
   ]);
+
   return topTracks.map(([uri, data], idx) => [
     {
       uri: uri,
@@ -105,7 +102,7 @@ const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackL
             {trackList &&
               trackList.map(([{ uri, images }, trackData], idx1) => {
                 return (
-                  <tr className="border-b border-[1px] dark:border-gray-700 ">
+                  <tr className="border-b border-[1px] dark:border-gray-700 " key={idx1}>
                     <td className="px-5 py-2">{idx1 + 1}</td>
                     <td className="px-5 py-2">
                       <a className="my-auto ml-2 flex gap-x-2" href={uri}>
@@ -126,6 +123,7 @@ const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackL
                             <div
                               onMouseEnter={() => setArtistHoverState((prev) => ({ ...prev, [id]: true }))}
                               onMouseLeave={() => setArtistHoverState((prev) => ({ ...prev, [id]: false }))}
+                              key={`${idx1}-${idx2}`}
                             >
                               {artistHoverState && artistHoverState[id] && (
                                 <HoverPopup textList={[artistName]}></HoverPopup>

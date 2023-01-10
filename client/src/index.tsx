@@ -25,9 +25,7 @@ const router = createBrowserRouter([
 
 root.render(
   <React.StrictMode>
-    <main className={window.localStorage.getItem('dark mode') === 'true' ? 'dark' : ''}>
-      <RouterProvider router={router} />
-    </main>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

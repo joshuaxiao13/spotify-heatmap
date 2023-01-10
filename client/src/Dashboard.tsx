@@ -12,7 +12,7 @@ import Modal from './components/Modal';
 const Dashboard = () => {
   const [queryParams] = useSearchParams();
   const user = useRef<SpotifyUser | null>(null);
-  const historyPromise = useRef<Promise<Record<string, DayLookup>> | null>(null);
+  const filterHistoryPromise = useRef<Promise<Record<string, DayLookup>> | null>(null);
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
@@ -30,10 +30,22 @@ const Dashboard = () => {
         setProfile(res);
       });
 
-      historyPromise.current = user.current.getListeningHistory();
-      historyPromise.current
+      filterHistoryPromise.current = user.current.getListeningHistory().then((res) => {
+        setHistory(res);
+        const filterThisWeekOnly: Record<string, DayLookup> = {};
+        const date = new Date();
+        do {
+          const lookup: DayLookup = res[date.toDateString()];
+          if (lookup) {
+            filterThisWeekOnly[date.toDateString()] = lookup;
+          }
+          date.setDate(date.getDate() - 1);
+        } while (date.getDay() !== 6);
+        return filterThisWeekOnly;
+      });
+
+      filterHistoryPromise.current
         .then((res) => {
-          setHistory(res);
           setHistoryForTable({ history: res, day: 'This Week' });
         })
         .catch((err) => {
@@ -56,8 +68,8 @@ const Dashboard = () => {
       const handleClick = (event: MouseEvent) => {
         const el: HTMLElement = event.target as HTMLElement;
         if (el && !el.classList?.contains('day-cell')) {
-          if (historyPromise.current) {
-            historyPromise.current.then((res) => {
+          if (filterHistoryPromise.current) {
+            filterHistoryPromise.current.then((res) => {
               setHistoryForTable({ history: res, day: 'This Week' });
             });
           }
@@ -73,27 +85,6 @@ const Dashboard = () => {
         target?.removeEventListener('click', handleClick);
       };
     }
-  }, []);
-
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      const target: HTMLElement = event.target as HTMLElement;
-      const cells = document.querySelectorAll('.day-cell');
-      cells.forEach((cell) => {
-        const cellDiv = cell as HTMLDivElement;
-        if (target === cellDiv) {
-          cellDiv.style.borderColor = 'rgb(0,191,255)';
-        } else {
-          cellDiv.style.borderColor = '';
-        }
-      });
-    };
-
-    document.getElementById('dashboard')?.addEventListener('click', handleClick);
-
-    return () => {
-      document.getElementById('dashboard')?.removeEventListener('click', handleClick);
-    };
   }, []);
 
   return (
@@ -147,7 +138,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div id="dashboardRight" className="w-4/5">
-            <div id="heatmap" className="w-fit mx-auto my-10">
+            <div className="w-fit mx-auto my-10">
               <YearHeatmap
                 data={history || {}}
                 dayOnClick={(newHistory: { history: Record<string, DayLookup>; day: string }) =>

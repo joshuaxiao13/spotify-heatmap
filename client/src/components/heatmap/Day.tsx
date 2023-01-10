@@ -64,7 +64,9 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       onClick={() => {
-        if (dayOnClick) dayOnClick({ history: { [date]: data.songsPlayed }, day: date });
+        if (dayOnClick) {
+          dayOnClick({ history: { [date]: data.songsPlayed }, day: date });
+        }
       }}
     >
       {isHover && (
