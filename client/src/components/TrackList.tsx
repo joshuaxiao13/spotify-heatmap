@@ -65,31 +65,31 @@ async function mostListensThisWeek(
 }
 
 interface TrackListProps {
-  history: Record<string, DayLookup> | undefined;
+  data: { history: Record<string, DayLookup>; day: string } | undefined;
   fetchTrackImagesById: fetchTrackImagesFun | undefined;
   fetchArtistImagesById: fetchArtistImagesFun | undefined;
 }
 
-const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: TrackListProps) => {
+const TrackList = ({ data, fetchTrackImagesById, fetchArtistImagesById }: TrackListProps) => {
   const [trackList, setTrackList] = useState<mostListensThisWeekResponse>();
   const [artistHoverState, setArtistHoverState] = useState<{ [k: string]: Boolean }>();
 
   useEffect(() => {
-    if (history && fetchTrackImagesById && fetchArtistImagesById) {
-      mostListensThisWeek(history, fetchTrackImagesById, fetchArtistImagesById)
+    if (data?.history && fetchTrackImagesById && fetchArtistImagesById) {
+      mostListensThisWeek(data.history, fetchTrackImagesById, fetchArtistImagesById)
         .then((res) => setTrackList(res))
         .catch((e) => {
           console.log(e);
         });
     }
-  }, [history, fetchTrackImagesById, fetchArtistImagesById]);
+  }, [data, fetchTrackImagesById, fetchArtistImagesById]);
 
-  if (!(history && fetchTrackImagesById) || !trackList) return <></>;
+  if (!(data && fetchTrackImagesById) || !trackList) return <></>;
 
   return (
     <>
       <h2 id="recentActivity" className="text-center">
-        Recent Activity This Week
+        Activity {data.day}
       </h2>
       <div className="w-2/3 pt-5 my-2 bg-gray-100 rounded-md border border-gray-300 mx-auto relative overflow-x-auto">
         <table className="border-collapse table-auto w-full">
@@ -102,7 +102,7 @@ const TrackList = ({ history, fetchTrackImagesById, fetchArtistImagesById }: Tra
             </tr>
           </thead>
           <tbody className="bg-white text-gray-600 shadow-md text-sm">
-            {history &&
+            {trackList &&
               trackList.map(([{ uri, images }, trackData], idx1) => {
                 return (
                   <tr className="border-b border-[1px]">

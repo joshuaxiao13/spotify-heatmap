@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const [profile, setProfile] = useState<UserProfileResponse>();
   const [history, setHistory] = useState<Record<string, DayLookup>>();
-  const [historyForTable, setHistoryForTable] = useState<Record<string, DayLookup>>();
+  const [historyForTable, setHistoryForTable] = useState<{ history: Record<string, DayLookup>; day: string }>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
   const [isModalShow, setIsModalShow] = useState(false); //modal
 
@@ -34,7 +34,7 @@ const Dashboard = () => {
       historyPromise.current
         .then((res) => {
           setHistory(res);
-          setHistoryForTable(res);
+          setHistoryForTable({ history: res, day: 'This Week' });
         })
         .catch((err) => {
           console.log(err);
@@ -58,7 +58,7 @@ const Dashboard = () => {
         if (el && !el.classList?.contains('day-cell')) {
           if (historyPromise.current) {
             historyPromise.current.then((res) => {
-              setHistoryForTable(res);
+              setHistoryForTable({ history: res, day: 'This Week' });
             });
           }
         }
@@ -127,13 +127,18 @@ const Dashboard = () => {
           </div>
           <div id="dashboardRight" className="w-4/5">
             <div id="heatmap" className="w-fit mx-auto my-10">
-              <YearHeatmap data={history || {}} dayOnClick={(newHistory) => setHistoryForTable(newHistory)} />
+              <YearHeatmap
+                data={history || {}}
+                dayOnClick={(newHistory: { history: Record<string, DayLookup>; day: string }) =>
+                  setHistoryForTable(newHistory)
+                }
+              />
               <p className="text-xs text-gray-400">
                 *heatmap only displays data logged since registration with spotify heatmap.
               </p>
             </div>
             <TrackList
-              history={historyForTable}
+              data={historyForTable}
               fetchTrackImagesById={user.current?.getTrackImagesById.bind(user.current)}
               fetchArtistImagesById={user.current?.getArtistImagesById.bind(user.current)}
             />

@@ -15,7 +15,8 @@ interface DayHeatmapProps {
     mean: number;
     std: number;
   };
-  dayOnClick?: (history: Record<string, DayLookup>) => void;
+
+  dayOnClick?: (data: { history: Record<string, DayLookup>; day: string }) => void;
 }
 
 const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
@@ -63,7 +64,7 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       onClick={() => {
-        if (dayOnClick) dayOnClick({ [date]: data.songsPlayed });
+        if (dayOnClick) dayOnClick({ history: { [date]: data.songsPlayed }, day: date });
       }}
     >
       {isHover && (

@@ -97,7 +97,7 @@ const getStatistics = (data: Record<string, DayLookup>): { mean: number; std: nu
 
 interface YearHeatmapProps {
   data: Record<string, DayLookup>;
-  dayOnClick?: (history: Record<string, DayLookup>) => void;
+  dayOnClick?: (history: { history: Record<string, DayLookup>; day: string }) => void;
 }
 
 const YearHeatmap = ({ data, dayOnClick }: YearHeatmapProps) => {
@@ -107,7 +107,7 @@ const YearHeatmap = ({ data, dayOnClick }: YearHeatmapProps) => {
   return (
     <div className=" bg-white flex w-fit h-fit p-3 rounded-sm border-[1px]">
       {year.map((week) => (
-        <WeekHeatmap key={week[0]?.date} data={week} stats={stats} dayOnClick={dayOnClick}></WeekHeatmap>
+        <WeekHeatmap key={week[0]?.date} data={week} stats={stats} dayOnClick={dayOnClick} />
       ))}
     </div>
   );

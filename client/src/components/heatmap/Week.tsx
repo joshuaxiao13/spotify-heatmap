@@ -6,7 +6,7 @@ export type Week = Day[];
 interface WeekHeatmapProps {
   data: Week;
   stats: { mean: number; std: number };
-  dayOnClick?: (history: Record<string, DayLookup>) => void;
+  dayOnClick?: (data: { history: Record<string, DayLookup>; day: string }) => void;
 }
 
 const WeekHeatmap = ({ data, stats, dayOnClick }: WeekHeatmapProps) => {
