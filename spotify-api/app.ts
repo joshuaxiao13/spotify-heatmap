@@ -29,7 +29,7 @@ const start = async (): Promise<void> => {
       console.log(`listening on port ${PORT} ...`);
     });
     updateAllUsers();
-    setInterval(updateAllUsers, 50 * 60 * 1000);
+    setInterval(updateAllUsers, 15 * 60 * 1000);
   } catch (err) {
     console.log('failed to connect to DB');
   }
