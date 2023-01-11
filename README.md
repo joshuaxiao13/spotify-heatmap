@@ -102,8 +102,10 @@ cd spotify-api && NODE_ENV=production npx ts-node app.ts
 
 Edit `spotify-api/package.json` `start:server` script to
 
-```yaml
-'scripts': { ? ...
-      "start:server"
-    : 'NODE_ENV=development nodemon server.ts', ... }
+```sh
+'scripts': {
+  ...
+      "start:server" : 'NODE_ENV=development nodemon server.ts',
+ ...
+ }
 ```
