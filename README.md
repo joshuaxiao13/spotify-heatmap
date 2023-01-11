@@ -93,3 +93,13 @@ The script to start the app should be something similar to
 ```sh
 cd spotify-api && NODE_ENV=production npx ts-node app.ts
 ```
+
+## Unix Users
+Edit `spotify-api/package.json` `start:server` script to
+```yaml
+  "scripts": {
+    ...
+    "start:server": "NODE_ENV=development nodemon server.ts",
+    ...
+  }
+```
