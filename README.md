@@ -48,7 +48,7 @@ MONGODB_URI=[paste MongoURI]
 9. In the project's root directory, run:
 
 ```
-npm run install:all
+$ npm run install:all
 ```
 
 This will install all required dependencies.
