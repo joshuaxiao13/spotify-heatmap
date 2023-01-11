@@ -69,7 +69,7 @@ or
 $ cd spotify-api && npm run build:frontend && npm start
 ```
 
-## Run Server For Development
+## Run Client & Server For Development
 
 To avoid building the frontend after every change in the `client` directory, run
 
