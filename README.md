@@ -2,7 +2,7 @@
 
 ## Overview
 
-Spotify Heat is a tool to visualize your Spotify listening history in the form of a heatmap. You can find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login). It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on https://spotify-heatmap.onrender.com/.
+Spotify Heatmap is a tool to visualize your Spotify listening history in the form of a heatmap. You can find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login). It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on https://spotify-heatmap.onrender.com/.
 
 ## Setup Local Environment
 
@@ -88,4 +88,8 @@ Any changes you make to the client should now automatically reflect in the brows
 ## Deploy
 
 Set `process.env.REACT_REDIRECT_URI` and update the redirect url on the Spotify Developer Dashboard accordingly.
-Also set `process.env.NODE_ENV=production`.
+Also set `process.env.NODE_ENV=production`. The script to start the app should be
+
+```
+$ cd spotify-api && npx ts-node app.ts
+```
