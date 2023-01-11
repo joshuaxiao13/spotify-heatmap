@@ -2,7 +2,11 @@
 
 ## Overview
 
-Spotify Heatmap is a tool to visualize your Spotify listening history in the form of a heatmap. You can find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login). It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com).
+Spotify Heatmap is a tool to visualize your Spotify listening history in the form of a heatmap. You can find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login).
+
+<img alt='demo-screenshot' src='/assets/heatmap_screenshot.jpg'></img>
+
+It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com).
 
 ## Setup Local Environment
 
@@ -95,11 +99,11 @@ cd spotify-api && NODE_ENV=production npx ts-node app.ts
 ```
 
 ## Unix Users
+
 Edit `spotify-api/package.json` `start:server` script to
+
 ```yaml
-  "scripts": {
-    ...
-    "start:server": "NODE_ENV=development nodemon server.ts",
-    ...
-  }
+'scripts': { ? ...
+      "start:server"
+    : 'NODE_ENV=development nodemon server.ts', ... }
 ```
