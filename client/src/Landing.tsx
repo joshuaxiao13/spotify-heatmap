@@ -16,7 +16,7 @@ const Landing = () => {
         <p className="w-fit mx-auto mb-2 dark:text-gray-400">
           Eagerly waiting for your yearly Spotify Wrapped? Spotify Heatmap allows you to view much more 📈
         </p>
-        <ul className="w-fit mx-auto space-y-1 text-gray-500 list-disc list-inside dark:text-gray-500">
+        <ul className="w-fit mx-auto space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
           <li>A personal heatmap detailing daily listens in the last year</li>
           <li>A ranking of your most streamed songs in the past week and any day</li>
           <li>Youtube playlist to Spotify playlist converter (coming soon)</li>
