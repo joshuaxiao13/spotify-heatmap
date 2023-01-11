@@ -88,8 +88,8 @@ Any changes you make to the client should now automatically reflect in the brows
 ## Deploy
 
 Set `process.env.REACT_REDIRECT_URI` and update the redirect url on the Spotify Developer Dashboard accordingly.
-Also set `process.env.NODE_ENV=production`. The script to start the app should be
+The script to start the app should be something similar to
 
 ```sh
-cd spotify-api && npx ts-node app.ts
+cd spotify-api && NODE_ENV=production npx ts-node app.ts
 ```
