@@ -8,21 +8,21 @@ Spotify Heatmap is a tool to visualize your Spotify listening history in the for
 
 1. Clone the repository.
 
-```
-$ git clone https://github.com/joshuaxiao13/spotify-heatmap.git
+```sh
+git clone https://github.com/joshuaxiao13/spotify-heatmap.git
 ```
 
 2. Install Node `v18.12.1`. If you have [Node Version Manager](https://github.com/nvm-sh/nvm) installed, you can install the desired version of Node with:
 
-```
-$ nvm use
+```sh
+nvm use
 ```
 
 3. Assuming you are in the root directory, navigate to the `spotify-api` directory, copy `.env.template`, and rename the copied file to `.env`.
 
-```
-$ cd spotify-api
-$ cp .env.template .env
+```sh
+cd spotify-api
+cp .env.template .env
 ```
 
 5. Head over to [MongoDB](`https://www.mongodb.com/`) and create a new cluster. Record the MongoURI by navigating to the Database tab > Connect > Connect your application (it should be prefixed by `mongodb+srv:`)
@@ -47,8 +47,8 @@ MONGODB_URI=[paste MongoURI]
 
 9. In the project's root directory, run:
 
-```
-$ npm run install:all
+```sh
+npm run install:all
 ```
 
 This will install all required dependencies.
@@ -57,30 +57,30 @@ This will install all required dependencies.
 
 Build the frontend and start the server. Assuming you're in the project's root directory you can either
 
-```
-$ cd client && npm run build
-$ cd ../spotify-api
-$ npm start
+```sh
+cd client && npm run build
+cd ../spotify-api
+npm start
 ```
 
 or
 
-```
-$ cd spotify-api && npm run build:frontend && npm start
+```sh
+cd spotify-api && npm run build:frontend && npm start
 ```
 
 ## Run Client & Server For Development
 
 To avoid building the frontend after every change in the `client` directory, run
 
-```
-$ cd spotify-api && npm run start:server
+```sh
+cd spotify-api && npm run start:server
 ```
 
 and in another tab, run
 
-```
-$ cd client && npm start
+```sh
+cd client && npm start
 ```
 
 Any changes you make to the client should now automatically reflect in the browser window.
@@ -90,6 +90,6 @@ Any changes you make to the client should now automatically reflect in the brows
 Set `process.env.REACT_REDIRECT_URI` and update the redirect url on the Spotify Developer Dashboard accordingly.
 Also set `process.env.NODE_ENV=production`. The script to start the app should be
 
-```
-$ cd spotify-api && npx ts-node app.ts
+```sh
+cd spotify-api && npx ts-node app.ts
 ```
