@@ -6,7 +6,7 @@ Spotify Heatmap is a tool to visualize your Spotify listening history in the for
 
 <img alt='demo-screenshot' src='/assets/heatmap_screenshot.jpg'></img>
 
-It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com). Currently, the app is in Development Mode, which means **users must request access to the app in order to use it**. The UI to request access is currently in progess. 
+It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com). Currently, the app is in Development Mode, which means **users must request access to the app in order to use it**. The UI to request access is currently in progess. The other option is run the app locally by following the steps below.
 
 ## Setup Local Environment
 
