@@ -33,7 +33,7 @@ cp .env.template .env
 
 6. Login to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/) and Create An App. Record the app's Client ID and Client Secret.
 
-7. While still on the Spotify Developer Dashboard, navigate to Edit Settings and under Redirect URIs, add `https://localhost:<PORT>/callback` where `<PORT>` should match `process.env.PORT`. If you don't define `process.env.PORT`, then enter `https://localhost:3000/callback`.
+7. While still on the Spotify Developer Dashboard, navigate to Edit Settings and under Redirect URIs, add `https://localhost:<PORT>/callback` where `<PORT>` should match `process.env.PORT`. If you don't define `process.env.PORT`, then enter `https://localhost:3000/callback`. Under Users and Access, add the email address connected to your Spotify Account. This must be done to access the app.
 
 8. Paste the MongoURI and Spotify Client ID and Client Secret into `.env`.
 
