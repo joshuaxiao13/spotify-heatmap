@@ -29,7 +29,7 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
   // https://tailwindcss.com/docs/content-configuration#class-detection-in-depth:~:text=exist%20in%20full%3A-,Always%20use%20complete%20class%20names,-%3Cdiv%20class
   let cellColor: string;
   if (numberOfSongsPlayed === 0) {
-    cellColor = 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500';
+    cellColor = 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-700';
   } else if (zScore <= -1.5) {
     cellColor = 'bg-green-50 border-green-200';
   } else if (zScore <= -1) {
