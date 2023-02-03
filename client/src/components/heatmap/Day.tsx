@@ -30,20 +30,20 @@ const DayHeatmap = ({ data, stats, dayOnClick }: DayHeatmapProps) => {
   let cellColor: string;
   if (numberOfSongsPlayed === 0) {
     cellColor = 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500';
-  } else if (zScore <= -3) {
+  } else if (zScore <= -1.5) {
     cellColor = 'bg-green-50 border-green-200';
-  } else if (zScore <= -2) {
-    cellColor = 'bg-green-100 border-green-300';
   } else if (zScore <= -1) {
+    cellColor = 'bg-green-100 border-green-300';
+  } else if (zScore <= -0.5) {
     cellColor = 'bg-green-200 border-green-500';
   } else if (zScore <= 0) {
     cellColor = 'bg-green-400 border-green-600';
-  } else if (zScore <= 1) {
+  } else if (zScore <= 0.5) {
     cellColor = 'bg-green-500 border-green-700';
-  } else if (zScore <= 2) {
+  } else if (zScore <= 1) {
     cellColor = 'bg-green-700 border-green-900';
   } else {
-    cellColor = 'bg-green-900 border-black';
+    cellColor = 'bg-green-800 border-black';
   }
 
   const formatMinutes = (mins: number): string => {
