@@ -123,7 +123,7 @@ const Dashboard = () => {
           <div id="dashboardLeft" className="w-1/5">
             <img
               className="rounded-full w-3/5 mx-auto mt-10 mb-4 shadow-md border-3"
-              src={profile?.images && profile.images[0]?.url}
+              src={profile?.images && (profile.images[1]?.url ?? profile.images[0]?.url)}
             ></img>
             <div className="w-full">
               <div className="mx-auto w-fit text-center text-lg dark:text-white">{profile?.display_name}</div>
