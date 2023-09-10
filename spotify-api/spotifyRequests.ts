@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { CLIENT_ID, CLIENT_SECRET } from './constants';
+import axios, { AxiosError, HttpStatusCode } from 'axios';
+import { CLIENT_ID, CLIENT_SECRET, API_KEY } from './constants';
 import { flatten, queryParamsStringify } from './utils';
 
 export interface UserProfileResponse {
@@ -205,4 +205,217 @@ export const fetchArtistImagesBySpotifyId = async (
       console.log(err);
       throw err;
     });
+};
+
+export interface spotifyYoutubeTrackMapping {
+  youtube: {
+    name: string;
+  };
+  spotify?: {
+    name: string;
+    uri: string;
+  };
+}
+const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
+  accessToken: string,
+  playlistTitle: { title: string },
+  maxRetries: number = 3,
+  currentRetry: number = 0
+): Promise<spotifyYoutubeTrackMapping> => {
+  return axios
+    .get<SpotifyApi.SearchResponse>(
+      queryParamsStringify('https://api.spotify.com/v1/search', {
+        q: playlistTitle.title,
+        type: 'track',
+        limit: '1',
+      }),
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+    .then((response) => {
+      // item limit is 1 above
+      const SpotifyTrackInfo: spotifyYoutubeTrackMapping | undefined = response.data.tracks?.items.map((track) => {
+        return {
+          youtube: {
+            name: playlistTitle.title,
+          },
+          spotify: {
+            uri: track.uri,
+            name: track.name,
+          },
+        };
+      })[0];
+
+      if (SpotifyTrackInfo === undefined) {
+        throw new Error('No spotify track found for video with name ' + playlistTitle.title);
+      }
+
+      return SpotifyTrackInfo;
+    })
+    .catch((err: AxiosError) => {
+      if (err.response?.status === HttpStatusCode.TooManyRequests) {
+        if (currentRetry < maxRetries) {
+          // Retry the request after a delay
+          const retryDelay = parseInt(err.response!.headers['retry-after'] as string) * 1000;
+          //   console.log(`Request failed. Retrying in ${retryDelay / 1000} seconds...`);
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(
+                fetchSingleSpotifyTrackByYoutubePlaylistURL(accessToken, playlistTitle, maxRetries, currentRetry + 1)
+              );
+            }, retryDelay);
+          });
+        } else {
+          // Max retries reached,
+          // console.log(`Max tries exceeded. Can't get song with title ${playlistTitle.title}`);
+          return {
+            youtube: {
+              name: playlistTitle.title,
+            },
+          };
+        }
+      } else {
+        // Can't find a correspond track for the youtube video
+        // console.log(`Can't get song with title ${playlistTitle.title}`);
+        return {
+          youtube: {
+            name: playlistTitle.title,
+          },
+        };
+      }
+    });
+};
+
+function chunkArray<T>(arr: T[], chunkSize: number) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    result.push(arr.slice(i, i + chunkSize));
+  }
+  return result;
+}
+
+export const fetchSpotifyTracksByYoutubePlaylistID = (
+  accessToken: string,
+  youtubePlaylistID: string
+): Promise<spotifyYoutubeTrackMapping[]> => {
+  return axios
+    .get<{ id: string; playlistTitles: { title: string }[] }>(
+      queryParamsStringify(`${API_KEY}/playlist`, {
+        id: youtubePlaylistID,
+      })
+    )
+    .then(async (response) => {
+      // batch requests, don't do all at once
+      const BATCH_SIZE = 50;
+      const partitions = chunkArray(response.data.playlistTitles, BATCH_SIZE);
+
+      let spotifyTrackInfoForTitles: spotifyYoutubeTrackMapping[] = [];
+      for (const chunk of partitions) {
+        //  fullfill the 50 promises before going onto the next batch
+        const fetchIntermediateResult = await Promise.all(
+          // todo: Do some preprocessing on the titleOnPlaylist string
+          // for example, remove words that grep with (official music video)
+          chunk.map((titleOnPlaylist) => fetchSingleSpotifyTrackByYoutubePlaylistURL(accessToken, titleOnPlaylist))
+        );
+        spotifyTrackInfoForTitles.push(...fetchIntermediateResult);
+      }
+
+      return spotifyTrackInfoForTitles;
+    })
+    .catch((error) => {
+      // console.log('Possible error from external service.');
+      throw error;
+    });
+};
+
+export interface createSpotifyPlaylistResponse {
+  spotifyPlaylistID: string;
+  spotifyPlaylistURL: string;
+}
+const createSpotifyPlaylist = (accessToken: string, userSpotifyID: string): Promise<createSpotifyPlaylistResponse> => {
+  return axios
+    .post<SpotifyApi.CreatePlaylistResponse>(
+      `https://api.spotify.com/v1/users/${userSpotifyID}/playlists`,
+      {
+        // todo: get the actual youtube playlist name
+        name: '[Spotify Heatmap] ' + Date(),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .then((response) => {
+      return { spotifyPlaylistID: response.data.id, spotifyPlaylistURL: response.data.external_urls.spotify };
+    })
+    .catch((error) => {
+      // console.log('Could not create new spotify playlist');
+      throw error;
+    });
+};
+
+const appendTracksToSpotifyPlaylist = (accessToken: string, spotifyPlaylistID: string, spotifyURIList: string[]) => {
+  return axios
+    .post<SpotifyApi.AddTracksToPlaylistResponse>(
+      `https://api.spotify.com/v1/playlists/${spotifyPlaylistID}/tracks`,
+      {
+        // It is likely that passing a large number of item URIs as a query parameter will exceed the maximum length of the request URI. When adding a large number of items, it is recommended to pass them in the request body: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist#:~:text=spotify%3Aepisode%3A512ojhOuo1ktJprKbVcKyQ-,A%20maximum%20of%20100%20items%20can%20be%20added%20in%20one%20request.,-Note%3A%20it%20is
+        uris: spotifyURIList,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    .catch((error) => {
+      // console.log('Could not append tracks to spotify playlist');
+      throw error;
+    });
+};
+
+export const createSpotifyPlaylistFromSpotifyURIs = async (
+  accessToken: string,
+  userSpotifyID: string,
+  spotifyURIList: spotifyYoutubeTrackMapping[]
+): Promise<createSpotifyPlaylistResponse> => {
+  const spotifyPlaylistInfo = await createSpotifyPlaylist(accessToken, userSpotifyID);
+
+  const notFoundTracks: string[] = [];
+  const foundTracks: Required<spotifyYoutubeTrackMapping>[] = [];
+
+  for (const track of spotifyURIList) {
+    if (track.spotify === undefined) {
+      notFoundTracks.push(track.youtube.name);
+    } else {
+      const spotify = track.spotify;
+      const youtube = track.youtube;
+      foundTracks.push({ spotify, youtube });
+    }
+  }
+
+  if (notFoundTracks.length > 0) {
+    // if there is at least one track that cannot be found, display msg detailing all songs that couldn't be found
+    alert('Cannot find the following songs:\n' + notFoundTracks.concat('\n'));
+  }
+
+  // The Spotify API Docs state that 100 is the max number of songs in a single add to playlist request: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist#:~:text=spotify%3Aepisode%3A512ojhOuo1ktJprKbVcKyQ-,A%20maximum%20of%20100%20items%20can%20be%20added%20in%20one%20request.,-Note%3A%20it%20is
+  const MAX_TRACKS_PER_REQUEST = 100;
+  const partitions = chunkArray(foundTracks, MAX_TRACKS_PER_REQUEST);
+
+  for (const chunk of partitions) {
+    // console.log('appending chunk:', chunk);
+
+    //  fullfill the MAX_TRACKS_PER_REQUEST promises before going onto the next batch
+    const spotifyURIList: string[] = chunk.map(({ spotify: { uri } }) => uri);
+    await appendTracksToSpotifyPlaylist(accessToken, spotifyPlaylistInfo.spotifyPlaylistID, spotifyURIList);
+  }
+
+  return spotifyPlaylistInfo;
 };

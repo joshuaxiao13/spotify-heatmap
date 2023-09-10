@@ -35,6 +35,7 @@ router.get('/login', function (req, res) {
     'user-read-private',
     'user-read-recently-played',
     'user-read-currently-playing',
+    'playlist-modify-public',
   ].join(' ');
 
   const params: RequestUserAuthorizationQueryParams = {

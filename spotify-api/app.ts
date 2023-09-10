@@ -8,11 +8,13 @@ import mongoose from 'mongoose';
 import path from 'path';
 import updateAllUsers from './scripts/updateAllHistory';
 import user from './routes/user';
+import playlist from './routes/playlist';
 
 const app = express();
 
 app.use(express.json());
 app.use('/api/v1', user);
+app.use('/api/v1', playlist);
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 app.use('/', auth);

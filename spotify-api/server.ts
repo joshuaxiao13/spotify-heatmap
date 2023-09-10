@@ -9,12 +9,14 @@ import user from './routes/user';
 import updateAllUsers from './scripts/updateAllHistory';
 import cors from 'cors';
 import { DEV_SEVER_PORT } from './constants';
+import playlist from './routes/playlist';
 
 const app = express();
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/api/v1', user);
+app.use('/api/v1', playlist);
 
 const PORT = DEV_SEVER_PORT;
 
