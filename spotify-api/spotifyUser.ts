@@ -12,8 +12,8 @@ import {
   Track,
   UserProfileResponse,
   fetchSpotifyTracksByYoutubePlaylistID,
-  createSpotifyPlaylistResponse,
-  spotifyYoutubeTrackMapping,
+  CreateSpotifyPlaylistResponse,
+  SpotifyYoutubeTrackMapping,
   createSpotifyPlaylistFromSpotifyURIs,
 } from './spotifyRequests';
 import { queryParamsStringify } from './utils';
@@ -207,14 +207,15 @@ export default class SpotifyUser {
    * @param url a youtube playlist url
    * @returns the youtube playlist id
    */
-  private static extractYoutubePlaylistIdFromYoutubeURL(url: string): string | null {
+  private static extractYoutubePlaylistIdFromYoutubeURL(url: string): string | undefined {
     const regex = /[?&]list=([^&]+)/;
     const match = url.match(regex);
 
     if (match && match[1]) {
       return match[1];
     } else {
-      return null; // No match found, user has not provided a valid playlist url
+      // No match found, user has not provided a valid playlist url
+      return undefined;
     }
   }
 
@@ -223,10 +224,12 @@ export default class SpotifyUser {
    * @param url a youtube playlist url
    * @returns a list containing the corresponding spotify uri for each song in the youtube playlist
    */
-  public async getSpotifyTracksByYoutubePlaylistURL(url: string): Promise<spotifyYoutubeTrackMapping[]> {
+  public async getSpotifyTracksByYoutubePlaylistURL(url: string): Promise<SpotifyYoutubeTrackMapping[]> {
     const youtubePlaylistID = SpotifyUser.extractYoutubePlaylistIdFromYoutubeURL(url);
 
-    if (youtubePlaylistID === null) throw new Error('URL is not a valid youtube playlist, given ' + url);
+    if (youtubePlaylistID === undefined) {
+      throw new Error('URL is not a valid youtube playlist, given ' + url);
+    }
 
     return this.run((accessToken: string) => fetchSpotifyTracksByYoutubePlaylistID(accessToken, youtubePlaylistID));
   }
@@ -237,8 +240,8 @@ export default class SpotifyUser {
    * @returns The spotify uri and url for the playlist
    */
   public async createSpotifyPlaylistFromSpotifyURIs(
-    spotifyURIList: spotifyYoutubeTrackMapping[]
-  ): Promise<createSpotifyPlaylistResponse> {
+    spotifyURIList: SpotifyYoutubeTrackMapping[]
+  ): Promise<CreateSpotifyPlaylistResponse> {
     const { id } = await this.profile;
     return this.run((accessToken: string) => createSpotifyPlaylistFromSpotifyURIs(accessToken, id, spotifyURIList));
   }

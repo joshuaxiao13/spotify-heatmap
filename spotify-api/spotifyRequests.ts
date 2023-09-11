@@ -207,7 +207,7 @@ export const fetchArtistImagesBySpotifyId = async (
     });
 };
 
-export interface spotifyYoutubeTrackMapping {
+export interface SpotifyYoutubeTrackMapping {
   youtube: {
     name: string;
   };
@@ -221,7 +221,7 @@ const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
   playlistTitle: { title: string },
   maxRetries: number = 3,
   currentRetry: number = 0
-): Promise<spotifyYoutubeTrackMapping> => {
+): Promise<SpotifyYoutubeTrackMapping> => {
   return axios
     .get<SpotifyApi.SearchResponse>(
       queryParamsStringify('https://api.spotify.com/v1/search', {
@@ -237,7 +237,7 @@ const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
     )
     .then((response) => {
       // item limit is 1 above
-      const SpotifyTrackInfo: spotifyYoutubeTrackMapping | undefined = response.data.tracks?.items.map((track) => {
+      const SpotifyTrackInfo: SpotifyYoutubeTrackMapping | undefined = response.data.tracks?.items.map((track) => {
         return {
           youtube: {
             name: playlistTitle.title,
@@ -259,18 +259,16 @@ const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
       if (err.response?.status === HttpStatusCode.TooManyRequests) {
         if (currentRetry < maxRetries) {
           // Retry the request after a delay
-          const retryDelay = parseInt(err.response!.headers['retry-after'] as string) * 1000;
-          //   console.log(`Request failed. Retrying in ${retryDelay / 1000} seconds...`);
+          const retryDelayMs = parseInt((err.response!.headers['retry-after'] as string) ?? 10) * 1000;
           return new Promise((resolve) => {
             setTimeout(() => {
               resolve(
                 fetchSingleSpotifyTrackByYoutubePlaylistURL(accessToken, playlistTitle, maxRetries, currentRetry + 1)
               );
-            }, retryDelay);
+            }, retryDelayMs);
           });
         } else {
           // Max retries reached,
-          // console.log(`Max tries exceeded. Can't get song with title ${playlistTitle.title}`);
           return {
             youtube: {
               name: playlistTitle.title,
@@ -278,8 +276,7 @@ const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
           };
         }
       } else {
-        // Can't find a correspond track for the youtube video
-        // console.log(`Can't get song with title ${playlistTitle.title}`);
+        // Can't find a corresponding track for the youtube video
         return {
           youtube: {
             name: playlistTitle.title,
@@ -289,7 +286,7 @@ const fetchSingleSpotifyTrackByYoutubePlaylistURL = (
     });
 };
 
-function chunkArray<T>(arr: T[], chunkSize: number) {
+function partitionArray<T>(arr: T[], chunkSize: number) {
   const result = [];
   for (let i = 0; i < arr.length; i += chunkSize) {
     result.push(arr.slice(i, i + chunkSize));
@@ -300,7 +297,7 @@ function chunkArray<T>(arr: T[], chunkSize: number) {
 export const fetchSpotifyTracksByYoutubePlaylistID = (
   accessToken: string,
   youtubePlaylistID: string
-): Promise<spotifyYoutubeTrackMapping[]> => {
+): Promise<SpotifyYoutubeTrackMapping[]> => {
   return axios
     .get<{ id: string; playlistTitles: { title: string }[] }>(
       queryParamsStringify(`${API_KEY}/playlist`, {
@@ -310,9 +307,9 @@ export const fetchSpotifyTracksByYoutubePlaylistID = (
     .then(async (response) => {
       // batch requests, don't do all at once
       const BATCH_SIZE = 50;
-      const partitions = chunkArray(response.data.playlistTitles, BATCH_SIZE);
+      const partitions = partitionArray(response.data.playlistTitles, BATCH_SIZE);
 
-      let spotifyTrackInfoForTitles: spotifyYoutubeTrackMapping[] = [];
+      let spotifyTrackInfoForTitles: SpotifyYoutubeTrackMapping[] = [];
       for (const chunk of partitions) {
         //  fullfill the 50 promises before going onto the next batch
         const fetchIntermediateResult = await Promise.all(
@@ -325,17 +322,16 @@ export const fetchSpotifyTracksByYoutubePlaylistID = (
 
       return spotifyTrackInfoForTitles;
     })
-    .catch((error) => {
-      // console.log('Possible error from external service.');
-      throw error;
+    .catch(() => {
+      throw new Error('Possible error from external service.');
     });
 };
 
-export interface createSpotifyPlaylistResponse {
+export interface CreateSpotifyPlaylistResponse {
   spotifyPlaylistID: string;
   spotifyPlaylistURL: string;
 }
-const createSpotifyPlaylist = (accessToken: string, userSpotifyID: string): Promise<createSpotifyPlaylistResponse> => {
+const createSpotifyPlaylist = (accessToken: string, userSpotifyID: string): Promise<CreateSpotifyPlaylistResponse> => {
   return axios
     .post<SpotifyApi.CreatePlaylistResponse>(
       `https://api.spotify.com/v1/users/${userSpotifyID}/playlists`,
@@ -353,9 +349,8 @@ const createSpotifyPlaylist = (accessToken: string, userSpotifyID: string): Prom
     .then((response) => {
       return { spotifyPlaylistID: response.data.id, spotifyPlaylistURL: response.data.external_urls.spotify };
     })
-    .catch((error) => {
-      // console.log('Could not create new spotify playlist');
-      throw error;
+    .catch(() => {
+      throw new Error('Could not create new user playlist.');
     });
 };
 
@@ -364,7 +359,6 @@ const appendTracksToSpotifyPlaylist = (accessToken: string, spotifyPlaylistID: s
     .post<SpotifyApi.AddTracksToPlaylistResponse>(
       `https://api.spotify.com/v1/playlists/${spotifyPlaylistID}/tracks`,
       {
-        // It is likely that passing a large number of item URIs as a query parameter will exceed the maximum length of the request URI. When adding a large number of items, it is recommended to pass them in the request body: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist#:~:text=spotify%3Aepisode%3A512ojhOuo1ktJprKbVcKyQ-,A%20maximum%20of%20100%20items%20can%20be%20added%20in%20one%20request.,-Note%3A%20it%20is
         uris: spotifyURIList,
       },
       {
@@ -374,21 +368,20 @@ const appendTracksToSpotifyPlaylist = (accessToken: string, spotifyPlaylistID: s
         },
       }
     )
-    .catch((error) => {
-      // console.log('Could not append tracks to spotify playlist');
-      throw error;
+    .catch(() => {
+      throw new Error('Could not append tracks to spotify playlist.');
     });
 };
 
 export const createSpotifyPlaylistFromSpotifyURIs = async (
   accessToken: string,
   userSpotifyID: string,
-  spotifyURIList: spotifyYoutubeTrackMapping[]
-): Promise<createSpotifyPlaylistResponse> => {
+  spotifyURIList: SpotifyYoutubeTrackMapping[]
+): Promise<CreateSpotifyPlaylistResponse> => {
   const spotifyPlaylistInfo = await createSpotifyPlaylist(accessToken, userSpotifyID);
 
   const notFoundTracks: string[] = [];
-  const foundTracks: Required<spotifyYoutubeTrackMapping>[] = [];
+  const foundTracks: Required<SpotifyYoutubeTrackMapping>[] = [];
 
   for (const track of spotifyURIList) {
     if (track.spotify === undefined) {
@@ -401,20 +394,24 @@ export const createSpotifyPlaylistFromSpotifyURIs = async (
   }
 
   if (notFoundTracks.length > 0) {
+    const songList = notFoundTracks.join('\n');
     // if there is at least one track that cannot be found, display msg detailing all songs that couldn't be found
-    alert('Cannot find the following songs:\n' + notFoundTracks.concat('\n'));
+    alert('Cannot find the following songs:\n\n' + songList);
   }
 
   // The Spotify API Docs state that 100 is the max number of songs in a single add to playlist request: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist#:~:text=spotify%3Aepisode%3A512ojhOuo1ktJprKbVcKyQ-,A%20maximum%20of%20100%20items%20can%20be%20added%20in%20one%20request.,-Note%3A%20it%20is
   const MAX_TRACKS_PER_REQUEST = 100;
-  const partitions = chunkArray(foundTracks, MAX_TRACKS_PER_REQUEST);
+  const partitions = partitionArray(foundTracks, MAX_TRACKS_PER_REQUEST);
 
   for (const chunk of partitions) {
-    // console.log('appending chunk:', chunk);
-
     //  fullfill the MAX_TRACKS_PER_REQUEST promises before going onto the next batch
-    const spotifyURIList: string[] = chunk.map(({ spotify: { uri } }) => uri);
-    await appendTracksToSpotifyPlaylist(accessToken, spotifyPlaylistInfo.spotifyPlaylistID, spotifyURIList);
+    try {
+      const spotifyURIList: string[] = chunk.map(({ spotify: { uri } }) => uri);
+      await appendTracksToSpotifyPlaylist(accessToken, spotifyPlaylistInfo.spotifyPlaylistID, spotifyURIList);
+    } catch {
+      const songList = String(chunk.map(({ youtube: { name } }) => name).join('\n'));
+      alert('Could not append the following tracks to spotify playlist:\n\n' + songList);
+    }
   }
 
   return spotifyPlaylistInfo;

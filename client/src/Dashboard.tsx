@@ -1,7 +1,7 @@
 import {
   CurrentlyPlayingResponse,
   UserProfileResponse,
-  createSpotifyPlaylistResponse,
+  CreateSpotifyPlaylistResponse,
 } from 'spotify-api/spotifyRequests';
 
 import { DayLookup } from 'spotify-api/models/user';
@@ -25,13 +25,10 @@ const Dashboard = () => {
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
   const [isDeleteUserDataModalShow, setIsDeleteUserModalShow] = useState(false);
 
-  // Yotube to Spotify playlist conversion states
-  // the current youtube url input from user
+  // Youtube to Spotify playlist conversion states
   const [youtubePlaylistURL, setYoutubePlaylistURL] = useState('');
   const [isYoutubePlaylistConverterModalShow, setIsYoutubePlaylistConverterModalShow] = useState(false);
-  // this spotify playlist id corresponds to the newly created playlist generated
   const [spotifyPlaylistID, setSpotifyPlaylistID] = useState('');
-  // true if currently creating spotify playlist
   const [isConverting, setIsConverting] = useState(false);
 
   const handleNonCellClick = (el: HTMLElement) => {
@@ -200,23 +197,20 @@ const Dashboard = () => {
         onClickHandler={async () => {
           try {
             setIsConverting(true);
-            const correspondingSpotifyTracksForYoutubePlaylist =
-              await user.current?.getSpotifyTracksByYoutubePlaylistURL(youtubePlaylistURL);
+            const spotifyTracks = await user.current?.getSpotifyTracksByYoutubePlaylistURL(youtubePlaylistURL);
 
-            // console.log('correspondingSpotifyTracksForYoutubePlaylist', correspondingSpotifyTracksForYoutubePlaylist);
-
-            if (correspondingSpotifyTracksForYoutubePlaylist === undefined)
+            if (spotifyTracks === undefined) {
               throw new Error('User Profile has not loaded yet, please retry when loading has finished');
-
-            const newSpotifyPlaylistInfo: createSpotifyPlaylistResponse | undefined =
-              await user.current?.createSpotifyPlaylistFromSpotifyURIs(correspondingSpotifyTracksForYoutubePlaylist);
-
-            if (newSpotifyPlaylistInfo === undefined)
-              throw new Error('User Profile has not loaded yet, please retry when loading has finished');
-
-            if (newSpotifyPlaylistInfo) {
-              setSpotifyPlaylistID(newSpotifyPlaylistInfo.spotifyPlaylistID);
             }
+
+            const newSpotifyPlaylistInfo: CreateSpotifyPlaylistResponse | undefined =
+              await user.current?.createSpotifyPlaylistFromSpotifyURIs(spotifyTracks);
+
+            if (newSpotifyPlaylistInfo === undefined) {
+              throw new Error('User Profile has not loaded yet, please retry when loading has finished');
+            }
+
+            setSpotifyPlaylistID(newSpotifyPlaylistInfo.spotifyPlaylistID);
           } catch (error) {
             alert('Error converting playlist. Ensure that the URL is a valid Youtube playlist.');
           } finally {
@@ -226,7 +220,6 @@ const Dashboard = () => {
       />
       <div className="w-screen h-screen min-h-fit bg-white dark:bg-black">
         <Header
-          deleteUserHandler={user.current?.deleteUser.bind(user.current)}
           showDeleteUserModal={() => setIsDeleteUserModalShow(true)}
           showYoutubePlaylistConverterModal={() => setIsYoutubePlaylistConverterModalShow(true)}
         />

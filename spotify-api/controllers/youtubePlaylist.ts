@@ -20,9 +20,7 @@ class YoutubePlaylistManager {
   }
 
   /**
-   * Get a list of items in the playlist.
-   *
-   * Note: We have imposed a limit of ~500 items to retreive from the playlist.
+   * Get a list of items in the playlist. We have imposed a limit of ~500 items to retreive from the playlist.
    * This limit handles the case where the user inputs a url that is really a mix or mixtape (which has infinite pages).
    *
    * @param id: The playlist id for the youtube playlist, in the 'list' param of the palylist url
