@@ -35,7 +35,9 @@ cp .env.template .env
 
 7. While still on the Spotify Developer Dashboard, navigate to Edit Settings and under Redirect URIs, add `https://localhost:<PORT>/callback` where `<PORT>` should match `process.env.PORT`. If you don't define `process.env.PORT`, then enter `https://localhost:3000/callback`. Under Users and Access, add the email address connected to your Spotify Account. This must be done to access the app.
 
-8. Paste the MongoURI and Spotify Client ID and Client Secret into `.env`.
+8. Follow steps 1 to 3 on this [page](https://developers.google.com/youtube/v3/getting-started#:~:text=You%20need%20a,API%20v3.) to retrieve an API key from the Google Developers Console (this will be used to make requests to the Youtube V3 API when converting a Youtube Playlist to a Spotify Playlist). In particular, make sure the status is **ON** for the **YouTube Data API v3** in the list of enabled APIs for the key you create.
+
+9. Paste the MongoURI, Spotify Client ID, Client Secret, and Google API key into `.env`.
 
 ```env
 # spotify client id (found in spotify developer dashboard)
@@ -47,9 +49,11 @@ CLIENT_SECRET=[paste Client Secret]
 # mongodb access uri
 MONGODB_URI=[paste MongoURI]
 
+# Google Developer Console API key
+GOOGLE_CLIENT_SECRET=''
 ```
 
-9. In the project's root directory, run:
+10. In the project's root directory, run:
 
 ```sh
 npm run install:all
