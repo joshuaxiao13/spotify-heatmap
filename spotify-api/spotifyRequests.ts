@@ -337,7 +337,7 @@ const createSpotifyPlaylist = (accessToken: string, userSpotifyID: string): Prom
       `https://api.spotify.com/v1/users/${userSpotifyID}/playlists`,
       {
         // todo: get the actual youtube playlist name
-        name: '[Spotify Heatmap] ' + Date(),
+        name: 'Spotify Heatmap ' + new Date().toLocaleDateString(),
       },
       {
         headers: {

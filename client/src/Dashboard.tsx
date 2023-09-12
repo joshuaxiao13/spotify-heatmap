@@ -135,7 +135,7 @@ const Dashboard = () => {
         title={`YouTube Playlist to Spotify Playlist Converter`}
         content={
           <>
-            <div>Create a public playlist in your spotify account from the tracks given in the youtube playlist.</div>
+            <div>Create a public playlist in your Spotify account from the tracks given in the YouTube playlist.</div>
             <br />
             <div className="mx-auto flex justify-center items-center">
               <h4 id="youtube-url-title" className=" font-bold text-center w-auto mr-2">
