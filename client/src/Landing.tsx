@@ -19,7 +19,7 @@ const Landing = () => {
         <ul className="w-fit mx-auto space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
           <li>A personal heatmap detailing daily listens in the last year</li>
           <li>A ranking of your most streamed songs in the past week and any day</li>
-          <li>Youtube playlist to Spotify playlist converter (coming soon)</li>
+          <li>YouTube to Spotify playlist converter</li>
         </ul>
         <div className="h-fit w-fit m-auto rounded-md bg-green-500 p-3 shadow-md">
           <a className="h-fit my-auto flex gap-x-0" href="/login">
