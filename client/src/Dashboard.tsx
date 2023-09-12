@@ -137,18 +137,36 @@ const Dashboard = () => {
         title={`Youtube Playlist to Spotify Playlist Converter`}
         content={
           <>
-            <div>
-              Will create a public playlist in your spotify account from the tracks given in the youtube playlist. The
-              input should be a URL to the youtube playlist. Our team has observed issues with converting youtube
-              playlists that are also 'mixtapes'; it is recommended that only playlists that are not mixtapes are used
-              given to the converter. Note that our team has imposed a limit of roughly 500 songs that can be added to a
-              playlist in a single conversion. If the given youtube playlist has over 500 songs, we will only add the
-              first roughly 500 songs.
-            </div>
+            <div>Create a public playlist in your spotify account from the tracks given in the youtube playlist.</div>
             <br />
-            <h4 id="youtube-url-title" className="mb-5 font-bold mx-auto text-center">
-              Youtube Playlist URL
-            </h4>
+            <div className="mx-auto flex justify-center items-center">
+              <h4 id="youtube-url-title" className=" font-bold text-center w-auto mr-2">
+                Youtube Playlist URL
+              </h4>
+              <div id="tooltip" className="group relative cursor-pointer py-2">
+                <div className="absolute invisible bottom-7 group-hover:visible w-96 bg-white text-black px-4 mb-3 py-2 text-sm rounded-md shadow-lg">
+                  <p className=" leading-2 text-black pt-2 pb-2">
+                    The input should be a URL to the Youtube playlist. We have imposed a limit of roughly 500 songs that
+                    can be added to a playlist in a single conversion. If the given Youtube playlist has over 500 songs,
+                    we will only add the first roughly 500 songs.
+                  </p>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="gray"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+              </div>
+            </div>
             <div className="w-11/12 mx-auto flex items-center justify-center">
               {/* area where user inputs youtube playlist url */}
               <input
