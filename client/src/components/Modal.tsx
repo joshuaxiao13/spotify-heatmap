@@ -18,7 +18,7 @@ const Modal = (props: ModalProps) => {
     >
       <div
         id="modal-content"
-        className="w-[500px] bg-white rounded-sm shadow-2xl space"
+        className="w-[500px] bg-white rounded-md shadow-2xl space dark:bg-neutral-800 dark:text-white dark:focus:shadow-darkGray p-3"
         onClick={(e) => e.stopPropagation()}
       >
         <div id="modal-header" className="p-[10px]">
@@ -26,15 +26,18 @@ const Modal = (props: ModalProps) => {
             {title}
           </h4>
         </div>
-        <div id="modal-body" className="p-[10px] border-t border-b  border-solid border-white text-sm">
+        <div
+          id="modal-body"
+          className="p-[10px] border-t border-b  border-solid border-white text-sm dark:border-neutral-800"
+        >
           {content}
         </div>
         <div id="modal-footer" className="p-[10px]">
           <div className="space-x-3">
-            <button onClick={onClickHandler} className="w-fit py-1 px-2 bg-red-500 text-white rounded-md text-sm">
+            <button onClick={onClickHandler} className="w-fit py-1 px-2 bg-green-700 text-white rounded-md text-sm">
               {buttonText}
             </button>
-            <button className="w-fit py-1 px-2 bg-gray-300 rounded-md text-sm" onClick={onClose}>
+            <button className="w-fit py-1 px-2 bg-red-700 rounded-md text-sm text-white" onClick={onClose}>
               Close
             </button>
           </div>

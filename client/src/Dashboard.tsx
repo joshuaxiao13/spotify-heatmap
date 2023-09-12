@@ -108,7 +108,7 @@ const Dashboard = () => {
             by going to{' '}
             <a
               href="https://www.spotify.com/us/account/apps/"
-              className="underline text-blue-600"
+              className="underline text-blue-600 dark:text-gray-300"
               target="_blank"
               rel="noreferrer"
             >
@@ -129,25 +129,23 @@ const Dashboard = () => {
         // youtube to playlist converter modal
         show={isYoutubePlaylistConverterModalShow}
         onClose={() => {
-          setYoutubePlaylistURL('');
-          setSpotifyPlaylistID('');
           setIsYoutubePlaylistConverterModalShow(false);
           setIsConverting(false);
         }}
-        title={`Youtube Playlist to Spotify Playlist Converter`}
+        title={`YouTube Playlist to Spotify Playlist Converter`}
         content={
           <>
             <div>Create a public playlist in your spotify account from the tracks given in the youtube playlist.</div>
             <br />
             <div className="mx-auto flex justify-center items-center">
               <h4 id="youtube-url-title" className=" font-bold text-center w-auto mr-2">
-                Youtube Playlist URL
+                YouTube Playlist URL
               </h4>
               <div id="tooltip" className="group relative cursor-pointer py-2">
                 <div className="absolute invisible bottom-7 group-hover:visible w-96 bg-white text-black px-4 mb-3 py-2 text-sm rounded-md shadow-lg">
                   <p className=" leading-2 text-black pt-2 pb-2">
-                    The input should be a URL to the Youtube playlist. We have imposed a limit of roughly 500 songs that
-                    can be added to a playlist in a single conversion. If the given Youtube playlist has over 500 songs,
+                    The input should be a URL to the YouTube playlist. We have imposed a limit of roughly 500 songs that
+                    can be added to a playlist in a single conversion. If the given YouTube playlist has over 500 songs,
                     we will only add the first roughly 500 songs.
                   </p>
                 </div>
@@ -171,7 +169,7 @@ const Dashboard = () => {
               {/* area where user inputs youtube playlist url */}
               <input
                 type="text"
-                className="resize-none w-11/12 h-5/6 my-auto mx-auto bg-gray-200 py-6
+                className="resize-none w-11/12 h-5/6 my-auto mx-auto bg-gray-200 py-6 dark:bg-gray-600
               px-3 border-blue-10 rounded-xl"
                 placeholder="ex. https://www.youtube.com/watch?v=eVNNfmr_vWI&list=PLyNlWGsQdus6v2P38x0urM9CeKX0lAQsM"
                 value={youtubePlaylistURL}
@@ -211,7 +209,7 @@ const Dashboard = () => {
             <br />
           </>
         }
-        buttonText={'Create Spotify Playlist'}
+        buttonText={'Convert'}
         onClickHandler={async () => {
           try {
             setIsConverting(true);
