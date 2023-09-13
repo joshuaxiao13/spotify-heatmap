@@ -41,10 +41,10 @@ cp .env.template .env
 
 ```env
 # spotify client id (found in spotify developer dashboard)
-CLIENT_ID=[paste Client Id]
+SPOTIFY_CLIENT_ID=[paste Client Id]
 
 # spotify client secret (found in spotify developer dashboard)
-CLIENT_SECRET=[paste Client Secret]
+SPOTIFY_CLIENT_SECRET=[paste Client Secret]
 
 # mongodb access uri
 MONGODB_URI=[paste MongoURI]

@@ -1,5 +1,5 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios';
-import { CLIENT_ID, CLIENT_SECRET, API_KEY } from './constants';
+import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, API_KEY } from './constants';
 import { flatten, queryParamsStringify } from './utils';
 
 export interface UserProfileResponse {
@@ -19,7 +19,7 @@ export const refreshAccessToken = async (refresh_token: string): Promise<string>
       },
       {
         headers: {
-          Authorization: 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+          Authorization: 'Basic ' + Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64'),
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       }
