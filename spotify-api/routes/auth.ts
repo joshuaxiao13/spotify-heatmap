@@ -1,7 +1,7 @@
 import { Request, Router } from 'express';
 import axios, { AxiosResponse } from 'axios';
 import { generateRandomString, queryParamsStringify } from '../utils';
-import { API_KEY, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '../constants';
+import { API_KEY, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, REDIRECT_URI } from '../constants';
 import { fetchUserProfile } from '../spotifyRequests';
 
 const router = Router();
@@ -35,10 +35,11 @@ router.get('/login', function (req, res) {
     'user-read-private',
     'user-read-recently-played',
     'user-read-currently-playing',
+    'playlist-modify-public',
   ].join(' ');
 
   const params: RequestUserAuthorizationQueryParams = {
-    client_id: CLIENT_ID,
+    client_id: SPOTIFY_CLIENT_ID,
     response_type: 'code',
     scope: scope,
     redirect_uri: REDIRECT_URI,
@@ -69,7 +70,7 @@ router.get('/callback', function (req: Request<{}, {}, {}, { code: string; state
         {
           headers: {
             // prettier-ignore
-            Authorization: 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+            Authorization: 'Basic ' + Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64'),
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         }

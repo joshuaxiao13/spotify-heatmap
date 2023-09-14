@@ -1,4 +1,9 @@
-import { CurrentlyPlayingResponse, UserProfileResponse } from 'spotify-api/spotifyRequests';
+import {
+  CurrentlyPlayingResponse,
+  UserProfileResponse,
+  CreateSpotifyPlaylistResponse,
+} from 'spotify-api/spotifyRequests';
+
 import { DayLookup } from 'spotify-api/models/user';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -18,7 +23,13 @@ const Dashboard = () => {
   const [history, setHistory] = useState<Record<string, DayLookup>>();
   const [historyForTable, setHistoryForTable] = useState<{ history: Record<string, DayLookup>; day: string }>();
   const [currentSong, setCurrentSong] = useState<CurrentlyPlayingResponse>();
-  const [isModalShow, setIsModalShow] = useState(false);
+  const [isDeleteUserDataModalShow, setIsDeleteUserModalShow] = useState(false);
+
+  // Youtube to Spotify playlist conversion states
+  const [youtubePlaylistURL, setYoutubePlaylistURL] = useState('');
+  const [isYoutubePlaylistConverterModalShow, setIsYoutubePlaylistConverterModalShow] = useState(false);
+  const [spotifyPlaylistID, setSpotifyPlaylistID] = useState('');
+  const [isConverting, setIsConverting] = useState(false);
 
   const handleNonCellClick = (el: HTMLElement) => {
     if (el && !el.classList?.contains('day-cell')) {
@@ -86,8 +97,9 @@ const Dashboard = () => {
   return (
     <>
       <Modal
-        show={isModalShow}
-        onClose={() => setIsModalShow(false)}
+        // delete user data modal
+        show={isDeleteUserDataModalShow}
+        onClose={() => setIsDeleteUserModalShow(false)}
         title={`Delete User Data`}
         content={
           <>
@@ -96,7 +108,7 @@ const Dashboard = () => {
             by going to{' '}
             <a
               href="https://www.spotify.com/us/account/apps/"
-              className="underline text-blue-600"
+              className="underline text-blue-600 dark:text-gray-300"
               target="_blank"
               rel="noreferrer"
             >
@@ -113,10 +125,119 @@ const Dashboard = () => {
           }
         }}
       />
+      <Modal
+        // youtube to playlist converter modal
+        show={isYoutubePlaylistConverterModalShow}
+        onClose={() => {
+          setIsYoutubePlaylistConverterModalShow(false);
+          setIsConverting(false);
+        }}
+        title={`YouTube Playlist to Spotify Playlist Converter`}
+        content={
+          <>
+            <div>Create a public playlist in your Spotify account from the tracks given in the YouTube playlist.</div>
+            <br />
+            <div className="mx-auto flex justify-center items-center">
+              <h4 id="youtube-url-title" className=" font-bold text-center w-auto mr-2">
+                YouTube Playlist URL
+              </h4>
+              <div id="tooltip" className="group relative cursor-pointer py-2">
+                <div className="absolute invisible bottom-7 group-hover:visible w-96 bg-white text-black px-4 mb-3 py-2 text-sm rounded-md shadow-lg">
+                  <p className=" leading-2 text-black pt-2 pb-2">
+                    The input should be a URL to the YouTube playlist. We have imposed a limit of roughly 500 songs that
+                    can be added to a playlist in a single conversion. If the given YouTube playlist has over 500 songs,
+                    we will only add the first roughly 500 songs.
+                  </p>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="gray"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="w-11/12 mx-auto flex items-center justify-center">
+              {/* area where user inputs youtube playlist url */}
+              <input
+                type="text"
+                className="resize-none w-11/12 h-5/6 my-auto mx-auto bg-gray-200 py-6 dark:bg-gray-600
+              px-3 border-blue-10 rounded-xl"
+                placeholder="ex. https://www.youtube.com/watch?v=eVNNfmr_vWI&list=PLyNlWGsQdus6v2P38x0urM9CeKX0lAQsM"
+                value={youtubePlaylistURL}
+                onChange={(e) => setYoutubePlaylistURL(e.target.value)}
+              />
+            </div>
+            <h4 id="spotify-playlist-title" className="my-5 font-bold mx-auto text-center">
+              {spotifyPlaylistID && 'Spotify Playlist'}
+            </h4>
+            <div className="w-11/12 mx-auto flex items-center justify-center">
+              {(isConverting && (
+                // if in the process of converting, show loading animation
+                <div
+                  className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                  role="status"
+                >
+                  <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                    Loading...
+                  </span>
+                </div>
+              )) || (
+                // if not in the process of converting, show the embed spotify playlist (if the user has converted a playlist already)
+                <div className="flex items-center justify-center" placeholder="type message here">
+                  {/* area where spotify playlist embded is shown */}
+                  {spotifyPlaylistID && (
+                    <iframe
+                      src={`https://open.spotify.com/embed/playlist/${spotifyPlaylistID}`}
+                      width="450"
+                      height="400"
+                      allow="encrypted-media"
+                      title="Spotify Playlist"
+                    ></iframe>
+                  )}
+                </div>
+              )}
+            </div>
+            <br />
+          </>
+        }
+        buttonText={'Convert'}
+        onClickHandler={async () => {
+          try {
+            setIsConverting(true);
+            const spotifyTracks = await user.current?.getSpotifyTracksByYoutubePlaylistURL(youtubePlaylistURL);
+
+            if (spotifyTracks === undefined) {
+              throw new Error('User Profile has not loaded yet, please retry when loading has finished');
+            }
+
+            const newSpotifyPlaylistInfo: CreateSpotifyPlaylistResponse | undefined =
+              await user.current?.createSpotifyPlaylistFromSpotifyURIs(spotifyTracks);
+
+            if (newSpotifyPlaylistInfo === undefined) {
+              throw new Error('User Profile has not loaded yet, please retry when loading has finished');
+            }
+
+            setSpotifyPlaylistID(newSpotifyPlaylistInfo.spotifyPlaylistID);
+          } catch (error) {
+            alert('Error converting playlist. Ensure that the URL is a valid Youtube playlist.');
+          } finally {
+            setIsConverting(false);
+          }
+        }}
+      />
       <div className="w-screen h-screen min-h-fit bg-white dark:bg-black">
         <Header
-          deleteUserHandler={user.current?.deleteUser.bind(user.current)}
-          showModal={() => setIsModalShow(true)}
+          showDeleteUserModal={() => setIsDeleteUserModalShow(true)}
+          showYoutubePlaylistConverterModal={() => setIsYoutubePlaylistConverterModalShow(true)}
         />
 
         <div id="dashboard" className="w-full flex">
