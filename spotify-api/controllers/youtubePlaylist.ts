@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { google, youtube_v3 } from 'googleapis';
+import { youtube, youtube_v3 } from '@googleapis/youtube';
 import { GOOGLE_CLIENT_SECRET } from '../constants';
 
 type YoutubePlaylistItem = {
@@ -13,7 +13,7 @@ class YoutubePlaylistManager {
   private youtube_v3API: youtube_v3.Youtube;
 
   constructor() {
-    this.youtube_v3API = google.youtube({
+    this.youtube_v3API = youtube({
       version: 'v3',
       auth: GOOGLE_CLIENT_SECRET,
     });
