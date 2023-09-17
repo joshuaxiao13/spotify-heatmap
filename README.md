@@ -2,11 +2,13 @@
 
 ## Overview
 
-Spotify Heatmap is a tool to visualize your Spotify listening history in the form of a heatmap. You can find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login).
+Spotify Heatmap is a tool to visualize your Spotify listening history and convert YouTube playlists to Spotify ones. Find the number of streams and the hours you spent listening on Spotify for any given day in the past year (provided that the day is after the day you first login). Try converting your favourite YouTube playlist and browse through the playlist with Spotify's UI instead.
 
-<img alt='demo-screenshot' src='/assets/heatmap_screenshot.jpg'></img>
+<img alt='demo-screenshot' src='/assets/heatmap-screenshot.jpg'></img>
 
-It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com). Currently, the app is in Development Mode, which means **users must request access to the app in order to use it**. The UI to request access is currently in progess. The other option is run the app locally by following the steps below.
+It uses the Spotify Web API to request the 50 most recently played tracks and stores the data in a database. This project mainly uses Typescript React, Express, and TailwindCSS for styling. You can find the demo on [spotify-heatmap.onrender.com](https://spotify-heatmap.onrender.com). The app is in Development Mode, which means **users can access the app only if they are listed under the users list on the Spotify Dashboard**. The other option is run the app locally by following the steps below.
+
+<img alt='demo-screenshot' src='/assets/playlist-screenshot.jpg'></img>
 
 ## Setup Local Environment
 
@@ -50,7 +52,7 @@ SPOTIFY_CLIENT_SECRET=[paste Client Secret]
 MONGODB_URI=[paste MongoURI]
 
 # Google Developer Console API key
-GOOGLE_CLIENT_SECRET=''
+GOOGLE_CLIENT_SECRET=[paste Google Client Secret]
 ```
 
 10. In the project's root directory, run:
@@ -64,14 +66,6 @@ This will install all required dependencies.
 ## Build and Serve Locally
 
 Build the frontend and start the server. Assuming you're in the project's root directory you can either
-
-```sh
-cd client && npm run build
-cd ../spotify-api
-npm start
-```
-
-or
 
 ```sh
 cd spotify-api && npm run build:frontend && npm start
