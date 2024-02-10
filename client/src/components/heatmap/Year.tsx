@@ -19,11 +19,11 @@ const groupbyWeek = (data: Record<string, DayLookup>) => {
   const listensGroupedByWeek: Week[] = [];
   let currentWeekListens: Week = [];
 
-  // lookup user's play history for the previous year
+  // Lookup user's play history for the previous year
   // 371 = 365 + 6. There are cases where the earliest week displayed
   // doesn't have all its days filled if we only display 365 days.
   // There can be at most 7 - 1 = 6 days not filled
-  // Note: we don't neccesarily display all 371 days (the condition to push the current week below)
+  // Note: we don't necessarily display all 371 days (the condition to push the current week below)
   for (let i = 0; i < 371; ++i) {
     const lookupByUrl = data[currentDate.toDateString()] || {};
     currentWeekListens[currentDate.getDay()] = {
