@@ -15,7 +15,11 @@ const genExampleData = (): Record<string, DayLookup> => {
   let currentDate = new Date();
   const exampleData: Record<string, DayLookup> = {};
 
-  for (let i = 0; i < 365; ++i) {
+  // 371 = 365 + 6. There are cases where the earliest week displayed
+  // doesn't have all its days filled if we only display 365 days.
+  // There can be at most 7 - 1 = 6 days not filled
+  // Note: we don't necessarily display all 371 days
+  for (let i = 0; i < 371; ++i) {
     exampleData[currentDate.toDateString()] = {
       exampleSpotifyUri: {
         name: 'exampleSongTitle',
